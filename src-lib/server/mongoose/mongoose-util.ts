@@ -44,7 +44,7 @@ export function tileResult(data: any): {
 }
 
 
-export function getSchemaBoolean(v: boolean | (() => boolean) | [boolean, string] | [() => boolean, string]): boolean | undefined {
+export function getSchemaBoolean(v?: boolean | (() => boolean) | [boolean, string] | [() => boolean, string]): boolean | undefined {
   if (typeof v === 'boolean') return v;
   if (typeof v === 'function') {
     const t = v();
@@ -52,7 +52,7 @@ export function getSchemaBoolean(v: boolean | (() => boolean) | [boolean, string
   }
 }
 
-export function getSchemaNumber(v: number | NativeDate | [number, string] | [NativeDate, string] | readonly [number, string] | readonly [NativeDate, string]): number | undefined {
+export function getSchemaNumber(v?: number | NativeDate | [number, string] | [NativeDate, string] | readonly [number, string] | readonly [NativeDate, string]): number | undefined {
   if (typeof v === 'number') return v;
   if (Array.isArray(v)) {
     const t = v[0];
@@ -60,13 +60,36 @@ export function getSchemaNumber(v: number | NativeDate | [number, string] | [Nat
   }
 }
 
-export function getSchemaEnumString(v: Array<string | number | null> | ReadonlyArray<string | number | null> | { values: Array<string | number | null> | ReadonlyArray<string | number | null>, message?: string } | { [path: string]: string | number | null }): string[] {
+export function getSchemaEnumString(v?:
+  Array<string | number | null> |
+  ReadonlyArray<string | number | null> |
+  { values: Array<string | number | null> |
+    ReadonlyArray<string | number | null>,
+    message?: string
+  } |
+  { [path: string]: string | number | null }): string[] {
   if (Array.isArray(v)) {
     return v.map((t) => {
       return `${t}`;
     });
   }
 }
-export function getSchemaEnumNumber(): string[] {
-
+export function getSchemaEnumNumber(v?:
+  Array<string | number | null> |
+  ReadonlyArray<string | number | null> |
+  { values: Array<string | number | null> |
+    ReadonlyArray<string | number | null>,
+    message?: string
+  } |
+  { [path: string]: string | number | null }): number[] {
+  if (Array.isArray(v)) {
+    return v.map((t) => {
+      if (typeof t === 'string') {
+        return Number.parseFloat(t);
+      }
+      if (typeof t === 'number') {
+        return t;
+      }
+    }).filter((t) => t !== undefined);
+  }
 }

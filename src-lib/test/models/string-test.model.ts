@@ -20,6 +20,7 @@ const StringTestSchema = new Schema<{
     required: true,
   },
   strField3: {
+    type: String,
     filterType: new MongooseModelAdmin.FilterTypes.FilterStringSearchType({
       tip: '就是提示你一下',
     }),

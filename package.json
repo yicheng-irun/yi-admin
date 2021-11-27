@@ -21,7 +21,7 @@
     "url": "git+https://github.com/yicheng-irun/yi-admin.git"
   },
   "scripts": {
-    "dev": "ts-node-dev -P src/test/tsconfig.json --respawn --watch src/server src/test/index.ts",
+    "dev": "ts-node-dev -P src-lib/test/tsconfig.json --respawn --watch src-lib/server src-lib/test/index.ts",
     "dev:client": "vite",
     "build:client": "vite build --ssrManifest --outDir dist/client",
     "build:server": "vite build --ssr src/client/entry-server.js --outDir dist/server",
@@ -29,7 +29,10 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.0.1",
     "@vue/server-renderer": "^3.2.22",
+    "ant-design-vue": "^2.2.8",
+    "axios": "^0.24.0",
     "co-body": "^6.1.0",
     "express": "^4.17.1",
     "formidable": "^2.0.1",

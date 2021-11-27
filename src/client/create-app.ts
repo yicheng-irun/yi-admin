@@ -1,14 +1,14 @@
-import {App, createSSRApp} from 'vue';
+import { App, createSSRApp } from 'vue';
 import {
   createMemoryHistory,
   createRouter as _createRouter,
-  createWebHistory,
   RouteLocationMatched,
   Router,
   RouteRecordRaw,
 } from 'vue-router';
-import {Store} from 'vuex';
+import { Store } from 'vuex';
 import RootApp from './App.vue';
+import { useAntDesign } from './plugins/ant-design-vue';
 
 // @ts-ignore
 const pages = import.meta.glob('./pages/**/*.page.vue');
@@ -26,13 +26,20 @@ Object.keys(pages).forEach((path: string) => {
       path: routerPath,
       component: pages[path],
     });
+
+    if (routerPath !== name) {
+      routes.push({
+        path: name,
+        component: pages[path],
+      });
+    }
   }
 });
 
 export function createRouter(): Router {
   return _createRouter({
-    // @ts-ignore
-    history: import.meta.env.SSR ? createMemoryHistory() : createWebHistory(),
+    // history: import.meta.env.SSR ? createMemoryHistory() : createWebHistory(),
+    history: createMemoryHistory(),
     routes,
   });
 }
@@ -45,6 +52,8 @@ export async function createApp(page: string): Promise<{
   store?: Store<unknown>,
   }> {
   const app = createSSRApp(RootApp);
+  useAntDesign(app);
+
   const router = createRouter();
   router.push(page);
   app.use(router);
@@ -66,5 +75,5 @@ export async function createApp(page: string): Promise<{
     }
   }
 
-  return {app, router, matchedRouter, store};
+  return { app, router, matchedRouter, store };
 }

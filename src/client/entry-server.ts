@@ -7,7 +7,8 @@ import { renderToString } from '@vue/server-renderer';
  * @param manifest
  * @returns
  */
-export async function render(page: string, param: {
+export async function render(page: string, context: {
+    baseURL: string;
     ssrParams: any
   }, manifest: Record<string, string[]>) {
   const { app, store, matchedRouter } = await createApp(page);
@@ -34,6 +35,7 @@ export async function render(page: string, param: {
   const initState = {
     page,
     state: store ? store.state : {},
+    baseURL: context.baseURL,
   };
 
   return [html, preloadLinks, initState];

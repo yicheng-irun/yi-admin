@@ -375,7 +375,7 @@ export async function createExpressRouter({
   const router = express.Router();
 
   const vite = await createServer({
-    root: resolve(__dirname, '../../'),
+    root: resolve(__dirname, '../../../'),
     base: basePath,
     server: {
       middlewareMode: 'ssr',
@@ -417,19 +417,20 @@ export async function createExpressRouter({
 
   router.use(createExpressSsrMiddleware({
     vite,
+    baseURL: basePath,
   }));
 
   router.use((req, res, next) => {
-    // if (!/\/$/.test(req.path)) { // 使强制加/
-    //    res.redirect(req.originalUrl.replace(req.path, () => `${req.path}/`));
-    //    return;
-    // }
     yiAdmin.permissionExpress(req, res, next);
   });
 
   router.get('/', async (req: express.Request, res: Response) => {
+    if (!req.originalUrl.endsWith('/')) { // 使强制加/
+      res.redirect(req.originalUrl + '/');
+      return;
+    }
     if (res.yiAdminSSRRender) {
-      await res.yiAdminSSRRender('yi-admin/site', getBaseRenderSSRParams(yiAdmin, req, res, ''));
+      await res.yiAdminSSRRender('/', getBaseRenderSSRParams(yiAdmin, req, res, ''));
     }
   });
   router.get('/site-menu/', safeJson(async (req, res) => {

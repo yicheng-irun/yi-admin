@@ -20,7 +20,7 @@ import { EditArrayType } from '../lib/edit-types/edit-array-type';
 import { ListArrayType } from '../lib/list-types/list-array-type';
 import { FilterTypes } from './mongoose-filter-types';
 import { FilterBaseType } from '../lib/filter-types/filter-base-type';
-import { getSchemaBoolean, getSchemaNumber, tileResult } from './mongoose-util';
+import { getSchemaBoolean, getSchemaEnumNumber, getSchemaEnumString, getSchemaNumber, tileResult } from './mongoose-util';
 import { EditObjectType } from '../lib/edit-types/edit-object-type';
 
 /**
@@ -38,7 +38,7 @@ const INSTANCE_EDIT_TYPE_MAP: {
   String(SchemaTypeOptions: SchemaTypeOptions<{}>): EditBaseType {
     if (SchemaTypeOptions.enum) {
       return new EditStringEnumType({
-        enum: SchemaTypeOptions.enum,
+        enum: getSchemaEnumString(SchemaTypeOptions.enum),
         required: getSchemaBoolean(SchemaTypeOptions.required),
         fieldNameAlias: SchemaTypeOptions.name,
       });
@@ -54,7 +54,7 @@ const INSTANCE_EDIT_TYPE_MAP: {
   Number(SchemaTypeOptions: SchemaTypeOptions<{}>): EditBaseType {
     if (SchemaTypeOptions.enum) {
       return new EditNumberEnumType({
-        enum: SchemaTypeOptions.enum,
+        enum: getSchemaEnumNumber(SchemaTypeOptions.enum),
         required: getSchemaBoolean(SchemaTypeOptions.required),
         fieldNameAlias: SchemaTypeOptions.name,
       });

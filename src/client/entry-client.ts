@@ -1,14 +1,19 @@
-import {createApp} from './create-app';
+import { createApp } from './create-app';
+import { axiosClientPlugin } from './plugins/axiox.client';
+import './components/base-layout.scss';
+import 'ant-design-vue/dist/antd.css';
 
 
 const initState: {
   page: string;
-  state: Record<string, unknown>
+  baseURL: string;
+  state: Record<string, unknown>;
 } =
   // @ts-ignore
   window.__INIT_STATE__ || {
     page: window.location.pathname,
     state: {},
+    baseURL: '/',
   };
 
 async function start() {
@@ -16,10 +21,8 @@ async function start() {
     app,
     store,
   } = await createApp(initState.page);
-
-  console.log(JSON.stringify(store?.state));
+  axiosClientPlugin(initState.baseURL, app);
   if (store) {
-    console.log(initState);
     store.replaceState(initState.state);
   }
   app.mount('#app');
