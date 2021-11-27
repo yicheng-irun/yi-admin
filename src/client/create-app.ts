@@ -1,52 +1,70 @@
-import { App, createSSRApp } from 'vue'
+import {App, createSSRApp} from 'vue';
 import {
-    createMemoryHistory,
-    createRouter as _createRouter,
-    createWebHistory,
-    Router,
-    RouteRecordRaw
-  } from 'vue-router'
-  import RootApp from './App.vue'
-  
-// Auto generates routes from vue files under ./pages
-// https://vitejs.dev/guide/features.html#glob-import
-const pages = import.meta.glob('./pages/*.vue')
+  createMemoryHistory,
+  createRouter as _createRouter,
+  createWebHistory,
+  RouteLocationMatched,
+  Router,
+  RouteRecordRaw,
+} from 'vue-router';
+import {Store} from 'vuex';
+import RootApp from './App.vue';
 
+// @ts-ignore
+const pages = import.meta.glob('./pages/**/*.page.vue');
 const routes: RouteRecordRaw[] = [];
-  
 Object.keys(pages).forEach((path: string) => {
-    const match = path.match(/\.\/pages(.*)\.vue$/);
-    if (match) {
-        const name = match[1].toLocaleLowerCase();
-        console.log(path, name)
-        routes.push({
-            path: name === '/index' ? '/' : name,
-            component: pages[path]
-        })
+  const match = path.match(/\.\/pages(.*)\.page\.vue$/);
+  if (match) {
+    const name = match[1].toLocaleLowerCase();
+    let routerPath = name.replace(/\/index$/, '');
+    if (routerPath === '/index') {
+      routerPath = '/';
     }
-})
 
-console.log(routes)
+    routes.push({
+      path: routerPath,
+      component: pages[path],
+    });
+  }
+});
 
 export function createRouter(): Router {
-    return _createRouter({
-        // use appropriate history implementation for server/client
-        // import.meta.env.SSR is injected by Vite.
-        history: import.meta.env.SSR ? createMemoryHistory() : createWebHistory(),
-        routes
-    })
+  return _createRouter({
+    // @ts-ignore
+    history: import.meta.env.SSR ? createMemoryHistory() : createWebHistory(),
+    routes,
+  });
 }
-  
 
 
-export function createApp(): {
-    app: App<Element>;
-    router: Router
-} {
-    const app = createSSRApp(RootApp);
-    const router = createRouter()
+export async function createApp(page: string): Promise<{
+  app: App<Element>;
+  router: Router,
+  matchedRouter: RouteLocationMatched
+  store?: Store<unknown>,
+  }> {
+  const app = createSSRApp(RootApp);
+  const router = createRouter();
+  router.push(page);
+  app.use(router);
 
-    app.use(router)
+  await router.isReady();
+  if (!router.currentRoute.value.matched.length) {
+    throw new Error('404');
+  }
+  const [matchedRouter] = router.currentRoute.value.matched;
+  const components = matchedRouter.components;
 
-    return {app, router}
+  let store: Store<unknown> | undefined;
+  // @ts-ignore
+  if (typeof components.default.createStore === 'function') {
+    // @ts-ignore
+    store = components.default.createStore();
+    if (store) {
+      app.use(store);
+    }
+  }
+
+  return {app, router, matchedRouter, store};
 }
