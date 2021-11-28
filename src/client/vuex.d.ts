@@ -1,8 +1,8 @@
 import { AxiosInstance } from 'axios';
-import { ComponentCustomProperties } from 'vue';
 import { Store } from 'vuex';
 
 declare module '@vue/runtime-core' {
+  // eslint-disable-next-line no-unused-vars
   interface ComponentCustomProperties {
     $store : Store<any>;
     $axios: AxiosInstance;
@@ -10,7 +10,8 @@ declare module '@vue/runtime-core' {
 }
 
 declare module 'vuex' {
-  interface Store {
+  // eslint-disable-next-line no-unused-vars
+  interface Store<S> {
     $axios: AxiosInstance;
   }
 }

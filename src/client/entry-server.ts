@@ -8,10 +8,11 @@ import { renderToString } from '@vue/server-renderer';
  * @returns
  */
 export async function render(page: string, context: {
+    query?: Record<string, any>;
     baseURL: string;
     ssrParams: any
   }, manifest: Record<string, string[]>) {
-  const { app, store, matchedRouter } = await createApp(page);
+  const { app, store, matchedRouter } = await createApp(page, context.query || {});
 
   // @ts-ignore
   if (typeof matchedRouter.components.default.fetch === 'function') {
@@ -34,6 +35,7 @@ export async function render(page: string, context: {
 
   const initState = {
     page,
+    query: context.query || {},
     state: store ? store.state : {},
     baseURL: context.baseURL,
   };

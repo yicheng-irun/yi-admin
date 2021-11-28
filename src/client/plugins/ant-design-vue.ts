@@ -1,9 +1,10 @@
 import {
   Button, Breadcrumb, ConfigProvider, Checkbox, DatePicker, Form, Input, InputNumber, Menu,
-  Pagination, Popconfirm, Select, Spin, Switch, Tooltip, message,
+  Pagination, Popconfirm, Select, Spin, Switch, Tooltip, message, notification,
 } from 'ant-design-vue';
 import { MessageApi } from 'ant-design-vue/lib/message';
-import { App, ComponentCustomProperties } from 'vue';
+import { NotificationApi } from 'ant-design-vue/lib/notification';
+import { App } from 'vue';
 
 export function useAntDesign(app: App) {
   app.use(Button);
@@ -26,7 +27,9 @@ export function useAntDesign(app: App) {
 }
 
 declare module '@vue/runtime-core' {
+    // eslint-disable-next-line no-unused-vars
     interface ComponentCustomProperties {
         $message: MessageApi;
+        $notic: NotificationApi
     }
   }

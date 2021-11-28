@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export function axiosClientPlugin(baseURL: string, app: App) {
   const instance = axios.create({
-    baseURL,
+    // baseURL,
   });
 
   app.config.globalProperties.$axios = instance;

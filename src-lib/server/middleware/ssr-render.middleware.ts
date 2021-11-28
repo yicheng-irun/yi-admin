@@ -30,6 +30,7 @@ export function createExpressSsrMiddleware(param: {
             page, {
               ssrParams,
               baseURL,
+              query: req.query,
             }, {})) as [string, string, {
           page: string;
         }];
@@ -38,6 +39,8 @@ export function createExpressSsrMiddleware(param: {
             .replace('<!--init-state-->', `<script>var __INIT_STATE__=${JSON.stringify(initState)}</script>`);
         res.send(html);
       } catch (e) {
+        console.log(222333);
+        console.error(e);
         res.status(500).send(e.message);
       }
     };

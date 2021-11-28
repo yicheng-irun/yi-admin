@@ -12,7 +12,7 @@
     />{{ siteMenu.title }}</a>
   </a-menu-item>
   <a-sub-menu v-else >
-    <template #icon><Icon icon="ok" /></template>
+    <template #icon><Icon icon="folder" /></template>
     <template #title>{{ siteMenu.title }}</template>
     <template v-for="item in siteMenu.children" >
       <a-menu-item  v-if="!item.children.length" :key="item.link"

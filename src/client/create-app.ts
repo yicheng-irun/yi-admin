@@ -36,16 +36,17 @@ Object.keys(pages).forEach((path: string) => {
   }
 });
 
-export function createRouter(): Router {
+export function createRouter(page: string): Router {
   return _createRouter({
-    // history: import.meta.env.SSR ? createMemoryHistory() : createWebHistory(),
+    // @ts-ignore
+    // history: import.meta.env.SSR ? createMemoryHistory() : createWebHashHistory(),
     history: createMemoryHistory(),
     routes,
   });
 }
 
 
-export async function createApp(page: string): Promise<{
+export async function createApp(page: string, query: Record<string, any>): Promise<{
   app: App<Element>;
   router: Router,
   matchedRouter: RouteLocationMatched
@@ -54,11 +55,15 @@ export async function createApp(page: string): Promise<{
   const app = createSSRApp(RootApp);
   useAntDesign(app);
 
-  const router = createRouter();
-  router.push(page);
-  app.use(router);
+  const router = createRouter(page);
+  router.replace({
+    path: page,
+    query,
+  });
 
   await router.isReady();
+  app.use(router);
+
   if (!router.currentRoute.value.matched.length) {
     throw new Error('404');
   }
@@ -66,10 +71,13 @@ export async function createApp(page: string): Promise<{
   const components = matchedRouter.components;
 
   let store: Store<unknown> | undefined;
+
   // @ts-ignore
   if (typeof components.default.createStore === 'function') {
     // @ts-ignore
-    store = components.default.createStore();
+    store = components.default.createStore({
+      router,
+    });
     if (store) {
       app.use(store);
     }

@@ -81,14 +81,22 @@ function appendModelAdminRouter(yiAdmin: YiAdmin, router: express.Router): void 
   });
 
   modelRouter.get('/', async (req, res: Response) => {
+    if (!req.originalUrl.endsWith('/')) { // 使强制加/
+      res.redirect(req.originalUrl + '/');
+      return;
+    }
     if (res.yiAdminSSRRender) {
-      await res.yiAdminSSRRender('yi-admin/model-admin-list', getBaseRenderSSRParams(yiAdmin, req, res));
+      await res.yiAdminSSRRender('/model-admin-list', getBaseRenderSSRParams(yiAdmin, req, res));
     }
   });
 
   modelRouter.get('/edit/', async (req, res: Response) => {
+    if (!req.originalUrl.endsWith('/')) { // 使强制加/
+      res.redirect(req.originalUrl + '/');
+      return;
+    }
     if (res.yiAdminSSRRender) {
-      await res.yiAdminSSRRender('yi-admin/model-admin-edit', getBaseRenderSSRParams(yiAdmin, req, res));
+      await res.yiAdminSSRRender('/model-admin-edit', getBaseRenderSSRParams(yiAdmin, req, res));
     }
   });
 
