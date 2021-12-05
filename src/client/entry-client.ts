@@ -1,7 +1,6 @@
 import { createApp } from './create-app';
 import { axiosClientPlugin } from './plugins/axiox.client';
 import './components/base-layout.scss';
-import 'ant-design-vue/dist/antd.css';
 
 
 const initState: {
@@ -31,8 +30,3 @@ async function start() {
 }
 
 start().catch(console.error);
-
-// 开启路由后置钩子，进行页面数据请求
-// router.afterEach(() => {
-//   getAsyncData(router, store, false);
-// })

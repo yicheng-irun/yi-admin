@@ -9,31 +9,36 @@
       :key="idx"
       class="filter-item"
     >
-      <a-tooltip
-        class="tooltip"
-        placement="topLeft"
+      <n-tooltip
+        trigger="hover"
         :title="fItem.componentConfig.tip"
       >
-        <label class="filter-item-label">{{ fItem.fieldNameAlias || fItem.fieldName }}: </label>
-        <div class="filter-fields-wrap">
-          <component
-            :is="getComponent(fItem.componentName)"
-            :filter-form-data="filterForm"
-            :object-key="fItem.fieldName"
-            :config="fItem.componentConfig"
-            :field-name="fItem.fieldName"
-            @reloadData="reloadData"
-          />
-        </div>
-      </a-tooltip>
+        <template #trigger>
+          <div class="filter-item-wrap">
+            <label class="filter-item-label">{{ fItem.fieldNameAlias || fItem.fieldName }}: </label>
+            <div class="filter-fields-wrap">
+              <component
+                :is="getComponent(fItem.componentName)"
+                :filter-form-data="filterForm"
+                :object-key="fItem.fieldName"
+                :config="fItem.componentConfig"
+                :field-name="fItem.fieldName"
+                @reloadData="reloadData"
+              />
+            </div>
+          </div>
+        </template>
+        <span>{{ fItem.componentConfig.tip || "暂无提示" }}</span>
+      </n-tooltip>
     </div>
-    <a-button
-      type="dashed"
+    <n-button
+      dashed
+      type="primary"
       icon="search"
       @click="reloadData"
     >
       查找
-    </a-button>
+    </n-button>
   </div>
 </template>
 <script lang="ts">
@@ -77,7 +82,7 @@ export default defineComponent({
       display: inline-block;
       vertical-align: top;
       margin: 0 1em 1em 0em;
-      >.tooltip {
+      >.filter-item-wrap {
          >.filter-item-label {
             color: #000;
             margin: 0 0.2em 0 0;

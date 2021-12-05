@@ -1,5 +1,5 @@
 <template>
-  <a-spin
+  <n-spin
     :spinning="state.loading"
     class="edit-form"
   >
@@ -26,7 +26,6 @@
         <div class="form-item-wrap">
           <component
             :is="getComponent(item.componentName)"
-            v-model="editFormData[item.fieldName]"
             :edit-form-data="editFormData"
             :object-key="item.fieldName"
             :name="item.fieldName"
@@ -41,25 +40,25 @@
         />
       </a-form-item>
       <a-form-item>
-        <a-button-group>
-          <a-button
+        <n-button-group>
+          <n-button
             type="primary"
             icon="check"
             @click="submit"
           >
             {{ editId ? '保存' : '提交' }}
-          </a-button>
-          <a-button
+          </n-button>
+          <n-button
             type="dashed"
             icon="undo"
             @click="reset"
           >
             重置
-          </a-button>
-        </a-button-group>
+          </n-button>
+        </n-button-group>
       </a-form-item>
     </a-form>
-  </a-spin>
+  </n-spin>
   <pre>
     {{JSON.stringify(editFormData)}}
   </pre>

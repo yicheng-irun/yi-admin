@@ -1,5 +1,5 @@
 <template>
-  <a-input
+  <n-input
     v-model="filterFormData[objectKey]"
     :placeholder="config.placeholder || ``"
     :max-length="config.maxLength"

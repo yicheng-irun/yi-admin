@@ -1,7 +1,7 @@
 <template>
   <div class="table-view">
-    <a-spin
-      :spinning="state.loading"
+    <n-spin
+      :show="state.loading"
 
     >
       <div class="top-action">
@@ -15,39 +15,35 @@
           class="top-action-row"
           @reloadData="reloadData"
         />
+
         <div class="top-action-row">
           <span class="action-lable">对选中项进行</span>
-          <a-select
-            v-if="checkedIdList"
-            v-model="batchActionIndex"
-            placeholder="请选择操作"
-            style="min-width: 150px"
-            :class="checkedIdList.length === 0 ? 'dashed' : ''"
-          >
-            <a-select-option
-              v-for="item in batchActionOptions"
-              :key="item.value"
-              :value="item.value"
-            >
-              {{ item.label }}
-            </a-select-option>
-          </a-select>
-          <a-popconfirm
+          <no-ssr>
+            <n-select
+              v-if="checkedIdList"
+              v-model="batchActionIndex"
+              placeholder="请选择操作"
+              style="min-width: 150px"
+              :class="checkedIdList.length === 0 ? 'dashed' : ''"
+              :options="batchActionOptions"
+            ></n-select>
+          </no-ssr>
+          <n-popconfirm
             v-if="selectedBatchAction && selectedBatchAction.popConfirm"
             title="确定执行这个操作吗？"
             ok-text="是"
             cancel-text="否"
             :ok-type="selectedBatchAction.buttonType || 'primary'"
-            @confirm="doBatchAction(selectedBatchAction)"
+            @positive-click="doBatchAction(selectedBatchAction)"
           >
-            <a-button
+            <n-button
               :type="selectedBatchAction.buttonType || 'default'"
             >
               <Icon v-if="selectedBatchAction.buttonIcon" :icon="selectedBatchAction.buttonIcon" ></Icon>
               执行
-            </a-button>
-          </a-popconfirm>
-          <a-button
+            </n-button>
+          </n-popconfirm>
+          <n-button
             v-else
             :type="(selectedBatchAction && selectedBatchAction.buttonType) || 'default'"
             :disabled="selectedBatchAction == null"
@@ -55,7 +51,7 @@
           >
             <Icon v-if="selectedBatchAction && selectedBatchAction.buttonIcon" :icon="selectedBatchAction.buttonIcon" ></Icon>
             执行
-          </a-button>
+          </n-button>
           <span
             v-if="checkedIdList"
             class="batch-action-helptext"
@@ -69,12 +65,12 @@
           <table class="table-view-table">
             <thead class="table-view-thead">
               <tr>
-                <th class="checkbox-all">
-                  <a-checkbox
+                <!-- <th class="checkbox-all">
+                  <n-checkbox
                     :checked="allChecked"
-                    @change="handelCheckAll"
+                    @on-update:checked="handelCheckAll"
                   />
-                </th>
+                </th> -->
                 <th>#</th>
                 <th>id</th>
                 <th>操作</th>
@@ -95,7 +91,7 @@
                 v-for="(item, index) in listData"
                 :key="item.id || index"
               >
-                <td><a-checkbox v-model="listCheckedStatusArray[index]" /></td>
+                <!-- <td><n-checkbox v-model="listCheckedStatusArray[index]" /></td> -->
                 <td class="index-td">
                   {{ index + 1 }}
                 </td>
@@ -106,7 +102,7 @@
                   <template
                     v-for="(actionItem, actionIndex) in rowListActions"
                   >
-                    <a-popconfirm
+                    <n-popconfirm
                       v-if="actionItem.popConfirm"
                       :key="actionIndex"
                       title="确定执行这个操作吗？"
@@ -115,15 +111,15 @@
                       :ok-type="actionItem.buttonType || 'primary'"
                       @confirm="doActions(actionItem, [item.id])"
                     >
-                      <a-button
+                      <n-button
                         size="small"
                         :type="actionItem.buttonType || ''"
                         :icon="actionItem.buttonIcon || ''"
                       >
                         {{ actionItem.actionName }}
-                      </a-button>
-                    </a-popconfirm>
-                    <a-button
+                      </n-button>
+                    </n-popconfirm>
+                    <n-button
                       v-else
                       :key="actionIndex + 'b'"
                       size="small"
@@ -132,7 +128,7 @@
                       @click="doActions(actionItem, [item.id])"
                     >
                       {{ actionItem.actionName }}
-                    </a-button>
+                    </n-button>
                   </template>
                 </td>
                 <td
@@ -165,8 +161,8 @@
             >第1页</a> </span>
           </div>
         </div>
-        <div class="table-view-footer">
-          <a-pagination
+        <div v-if="false" class="table-view-footer">
+          <n-pagination
             :current="pageIndex"
             :page-size-options="['10', '20', '50', '100', '200']"
             :page-size="state.pageSize"
@@ -179,7 +175,7 @@
           />
         </div>
       </div>
-    </a-spin>
+    </n-spin>
   </div>
 </template>
 
@@ -243,7 +239,10 @@ export default defineComponent({
     betListActions(): ListActionsItem[] {
       return this.listActions.filter((t: ListActionsItem) => t.isBatchAction);
     },
-    batchActionOptions() { // 批量操作的下拉选择框选项
+    batchActionOptions(): {
+        value: number;
+        label: any;
+      }[] { // 批量操作的下拉选择框选项
       const options = [];
       const actions = this.betListActions;
       for (let i = 0; i < actions.length; i += 1) {
@@ -341,7 +340,7 @@ export default defineComponent({
       }
     },
 
-    async doBatchAction(actionObj: ListActionsItem) {
+    async doBatchAction(actionObj: ListActionsItem | null) {
       const idList = this.checkedIdList;
       if (idList.length <= 0) {
         notification.error({
@@ -349,7 +348,9 @@ export default defineComponent({
         });
         return;
       }
-      this.doActions(actionObj, idList);
+      if (actionObj) {
+        this.doActions(actionObj, idList);
+      }
     },
 
     async doActions(actionObj: ListActionsItem, ids: string[] = []) {
@@ -399,24 +400,26 @@ export default defineComponent({
 <style lang="scss">
 .table-view {
   font-size: 12px;
-  margin: 0 1.5em;
   .top-action {
     padding: 0.8em 0 0.5em;
     >.top-action-row {
       font-size: 0.9em;
       color: #000a;
       padding: 0.6em 0;
+      >.n-select {
+        display: inline-block;
+        margin: 0 0.8em 0 0;
+        width: auto;
+        vertical-align: middle;
+        &.dashed>.ant-select-selection {
+          border-style: dashed;
+        }
+      }
       >.ant-btn {
         margin: 0 0.3em;
       }
       >.action-lable {
         margin: 0 0.8em 0 0;
-      }
-      >.ant-select {
-        margin: 0 0.8em 0 0;
-        &.dashed>.ant-select-selection {
-          border-style: dashed;
-        }
       }
       >.batch-action-helptext {
         font-size: 12px;

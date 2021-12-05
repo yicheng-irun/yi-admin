@@ -8,7 +8,9 @@ import {
 } from 'vue-router';
 import { Store } from 'vuex';
 import RootApp from './App.vue';
-import { useAntDesign } from './plugins/ant-design-vue';
+import NoSsr from './components/no-ssr.vue';
+// import { useAntDesign } from './plugins/ant-design-vue';
+import { useNaiveUi } from './plugins/naive-ui';
 
 // @ts-ignore
 const pages = import.meta.glob('./pages/**/*.page.vue');
@@ -38,7 +40,6 @@ Object.keys(pages).forEach((path: string) => {
 
 export function createRouter(page: string): Router {
   return _createRouter({
-    // @ts-ignore
     // history: import.meta.env.SSR ? createMemoryHistory() : createWebHashHistory(),
     history: createMemoryHistory(),
     routes,
@@ -53,7 +54,9 @@ export async function createApp(page: string, query: Record<string, any>): Promi
   store?: Store<unknown>,
   }> {
   const app = createSSRApp(RootApp);
-  useAntDesign(app);
+  app.component('no-ssr', NoSsr);
+  // useAntDesign(app);
+  useNaiveUi(app);
 
   const router = createRouter(page);
   router.replace({

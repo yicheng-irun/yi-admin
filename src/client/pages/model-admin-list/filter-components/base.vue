@@ -3,7 +3,6 @@
     class="form-components-base"
     v-text="value"
   />
-  <div>111111111</div>
 </template>
 
 <script lang="ts">

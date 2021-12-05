@@ -148,8 +148,20 @@ myadmin.addModelAdmin(new MongooseModelAdmin({
 myadmin.siteNavMenu.add(new SiteNavMenu({
   title: '测试菜单1',
   link: 'model-admin/yi-admin-demo/edit/',
-}));
+}).add(new SiteNavMenu({
+  title: '测试子菜单2',
+  link: 'https://www.xiwnn.com/',
+  icon: 'ok',
+})));
 
+myadmin.siteNavMenu.add(new SiteNavMenu({
+  title: '测试菜单2',
+  icon: 'close',
+}).add(new SiteNavMenu({
+  title: '测试子菜单2',
+  link: 'https://www.baidu.com/',
+  icon: 'ok',
+})));
 
 // (async function () {
 //    const t = await YiAdminDemoModel.findOne();

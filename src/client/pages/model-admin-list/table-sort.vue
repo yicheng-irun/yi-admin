@@ -6,21 +6,17 @@
       :key="idx"
       class="sort-item"
     >
-      <a-select
-        v-model="sortList[idx]"
-        placeholder="请选择"
-        style="min-width:150px"
-        @change="handleChange"
-      >
-        <a-select-option
-          v-for="item in getOptions(idx)"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+      <no-ssr>
+        <n-select
+          v-model="sortList[idx]"
+          placeholder="请选择"
+          size="small"
+          style="min-width:150px"
+          :on-update:value="handleChange"
+          :options="getOptions(idx)"
         >
-          <span>{{ item.label }}</span>
-        </a-select-option>
-      </a-select>
+        </n-select>
+      </no-ssr>
       <div class="sort-item-info">
         <button
           class="text-button danger"

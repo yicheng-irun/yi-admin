@@ -1,21 +1,15 @@
 <template>
-  <a-select
+  <n-select
     v-model="filterFormData[objectKey]"
     :placeholder="config.placeholder == null ? '请选择' : config.placeholder"
     :clearable="config.required ? false : true"
     :allow-clear="true"
     :mode="config.multiSelect ? 'multiple' : undefined"
     class="filter-component-select"
+    :options="options"
     @change="$emit('reloadData')"
   >
-    <a-select-option
-      v-for="item in options"
-      :key="item.value"
-      :value="item.value"
-    >
-      {{ item.label }}
-    </a-select-option>
-  </a-select>
+  </n-select>
 </template>
 
 <script lang="ts">

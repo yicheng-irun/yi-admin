@@ -8,7 +8,7 @@
       class="form-components-array-item"
     >
       <div class="delete-btn">
-        <a-button
+        <n-button
           type="danger"
           icon="close"
           size="small"
@@ -26,7 +26,7 @@
         :field-name="fieldName"
       />
     </div>
-    <a-button
+    <n-button
       v-if="value.length < maxLength"
       icon="plus"
       type="primary"
@@ -46,10 +46,6 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: Array,

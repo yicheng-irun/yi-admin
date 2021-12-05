@@ -1,5 +1,5 @@
 <template>
-  <YiAdminIcon :type="'icon-' + icon" :title="icon" />
+  <YiAdminIcon :type="'icon-' + icon" :title="icon"  class="yiadmin-icon" />
 </template>
 
 <script lang="ts">
@@ -22,3 +22,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.yiadmin-icon {
+  font-size: 1em;
+}
+</style>

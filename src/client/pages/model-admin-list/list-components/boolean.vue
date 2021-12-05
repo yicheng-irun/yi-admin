@@ -3,7 +3,7 @@
     v-if="typeof value === 'boolean'"
     class="list-components-boolean"
   >
-    <a-icon
+    <n-icon
       :type="value ? 'check-circle' : 'close-circle'"
       :class="value ? 'success' : 'error'"
     />

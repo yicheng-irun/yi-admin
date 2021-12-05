@@ -16,7 +16,6 @@ export interface IndexPageState {
     siteMenu: SiteMenu | null;
     siteConfig: SiteConfig | null;
     iframeSrc: string;
-    testValue: string,
 }
 
 export function createPageStore() {
@@ -25,7 +24,6 @@ export function createPageStore() {
       siteMenu: null,
       siteConfig: null,
       iframeSrc: '',
-      testValue: new Date().toString(),
     },
     actions: {
       async loadSiteMenu() {

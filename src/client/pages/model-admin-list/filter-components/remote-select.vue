@@ -1,5 +1,5 @@
 <template>
-  <a-select
+  <n-select
     v-model="filterFormData[objectKey]"
     :placeholder="config.placeholder == null ? '搜索和选择' : config.placeholder"
     show-search
@@ -11,15 +11,15 @@
     @search="remoteMethod"
     @change="$emit('reloadData')"
   >
-    <a-select-option
+    <n-select-option
       v-for="item in options"
       :key="item.value"
       :label="item.label"
       :value="item.value"
     >
       {{ item.label }}
-    </a-select-option>
-  </a-select>
+    </n-select-option>
+  </n-select>
 </template>
 
 <script lang="ts">

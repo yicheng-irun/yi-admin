@@ -11,22 +11,22 @@
         :alt="value"
       >
     </a>
-    <a-button-group>
-      <a-button
+    <n-button-group>
+      <n-button
         v-if="value"
         type="danger"
         icon="close"
         size="small"
         @click="handleInput('')"
       />
-      <a-button
+      <n-button
         size="small"
         type="primary"
         @click="selectFile"
       >
         {{ value ? '重新选择' : '选择图片' }}
-      </a-button>
-    </a-button-group>
+      </n-button>
+    </n-button-group>
   </div>
 </template>
 

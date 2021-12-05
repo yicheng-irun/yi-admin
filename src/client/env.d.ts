@@ -7,3 +7,10 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+
+// eslint-disable-next-line no-unused-vars
+interface ImportMeta {
+  readonly env: {
+    SSR: boolean
+  };
+}

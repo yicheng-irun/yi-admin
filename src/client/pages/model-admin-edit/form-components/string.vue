@@ -1,8 +1,9 @@
 <template>
   <a-input
-    v-model="editFormData[objectKey]"
+    v-model="value"
     :placeholder="config.placeholder || ''"
     :max-length="config.maxLength"
+    @change="onChange"
     class="form-component-string"
   />
 </template>
@@ -29,7 +30,15 @@ export default defineComponent({
       default: '',
     },
   },
+  data() {
+    return {
+      value: this.editFormData[this.objectKey] || '',
+    };
+  },
   methods: {
+    onChange(ttt, a) {
+      console.log(ttt, a, this.value);
+    },
   },
 });
 </script>

@@ -1,18 +1,19 @@
 <template>
-  <div class="table-action">
-    <a-button
-      type="dashed"
+  <n-space class="table-action">
+    <n-button
+      dashed
       @click="$emit('createData')"
+      type="primary"
     >
-      <Icon icon="plus" /> 新增
-    </a-button>
-    <a-button
-      type="dashed"
+      <Icon icon="plus" /> &nbsp; 新增
+    </n-button>
+    <n-button
+      dashed
       @click="$emit('reloadData')"
     >
-      <Icon icon="reload" /> 刷新
-    </a-button>
-  </div>
+      <Icon icon="reload" /> &nbsp; 刷新
+    </n-button>
+  </n-space>
 </template>
 
 <script setup lang="ts">
