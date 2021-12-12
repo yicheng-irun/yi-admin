@@ -1,28 +1,31 @@
 <template>
   <div
     class="form-components-base"
-    v-text="value"
+    v-text="editFormData[objectKey]"
   />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { PropType } from 'vue';
 
-export default defineComponent({
-  props: {
-    value: {
-      type: String,
-      default: '',
-    },
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
+defineProps({
+  config: Object as PropType<{ }>,
+  editFormData: {
+    type: Object as PropType<Record<string, unknown>>,
+    default() {
+      return {};
     },
   },
+  name: String,
+  fieldName: String,
+  objectKey: {
+    type: [String, Number] as PropType<string|number>,
+    default: '',
+  },
 });
+
 </script>
+
 
 <style lang="scss">
 .form-components-base {

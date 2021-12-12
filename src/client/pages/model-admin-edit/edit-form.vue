@@ -1,27 +1,24 @@
 <template>
   <n-spin
-    :spinning="state.loading"
+    :show="state.loading"
     class="edit-form"
   >
-    <a-form
-      ref="form"
-      :model="editFormData"
-      layout="horizontal"
-    >
-      <a-form-item
+    <div>
+      <n-form-item
         v-if="editId"
         label="id:"
       >
         <div class="edit-id">
           {{ editId }}
         </div>
-      </a-form-item>
-      <a-form-item
+      </n-form-item>
+      <n-form-item
         v-for="(item, index) in editFormFields"
         :key="index"
         :label="`${item.fieldNameAlias || item.fieldName}:`"
         :name="item.fieldName"
         :required="item.componentConfig.required"
+        :rule="{}"
       >
         <div class="form-item-wrap">
           <component
@@ -38,41 +35,40 @@
           class="ya-help-text"
           v-text="item.componentConfig.helpText"
         />
-      </a-form-item>
-      <a-form-item>
-        <n-button-group>
+      </n-form-item>
+      <n-form-item>
+        <n-space>
           <n-button
             type="primary"
-            icon="check"
             @click="submit"
           >
             {{ editId ? '保存' : '提交' }}
           </n-button>
           <n-button
-            type="dashed"
-            icon="undo"
+            dashed
             @click="reset"
           >
             重置
           </n-button>
-        </n-button-group>
-      </a-form-item>
-    </a-form>
+        </n-space>
+      </n-form-item>
+    </div>
   </n-spin>
   <pre>
     {{JSON.stringify(editFormData)}}
+  </pre>
+  <pre>
+    {{ JSON.stringify(editFormFields)}}
   </pre>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { notification } from 'ant-design-vue';
 import { FormComponents } from './form-components';
 import { EditFieldItem } from './store';
 
 export default defineComponent({
   components: {
-    // ...FormComponents,
   },
 
   props: {
@@ -114,18 +110,20 @@ export default defineComponent({
       try {
         const data = await this.$store.dispatch('formSubmit');
         if (data?.success) {
-          notification.success({
-            message: '保存成功',
+          this.$notification.success({
+            title: '保存成功',
             description: '保存成功',
+            duration: 5000,
           });
         } else {
           throw new Error(data?.message || '保存失败');
         }
       } catch (e) {
         if (e instanceof Error) {
-          notification.error({
-            message: '提交出错了',
+          this.$notification.error({
+            title: '提交出错了',
             description: e?.message || `${e}`,
+            duration: 5000,
           });
         }
       }
@@ -135,15 +133,19 @@ export default defineComponent({
     reset() {
       try {
         this.$store.commit('resetEditFormData');
-        notification.success({
-          message: '重置好了',
+        this.$notification.success({
+          title: '重置好了',
           description: '重置好了',
+          duration: 5000,
         });
       } catch (e) {
-        notification.error({
-          message: '重置出错了',
-          description: e?.message || `${e}`,
-        });
+        if (e instanceof Error) {
+          this.$notification.error({
+            title: '重置出错了',
+            description: e?.message || `${e}`,
+            duration: 5000,
+          });
+        }
       }
     },
   },
@@ -174,6 +176,9 @@ export default defineComponent({
             }
          }
       }
+   }
+   .form-item-wrap {
+     min-width: 120px
    }
 
    .ya-help-text {

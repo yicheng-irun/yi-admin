@@ -1,52 +1,45 @@
 <template>
-  <a-select
-    v-model="editFormData[objectKey]"
-    :placeholder="config.placeholder == null ? '请选择' : config.placeholder"
-    :clearable="config.required ? false : true"
-    :allow-clear="true"
+  <n-select
+    v-model:value="editFormData[objectKey]"
+    :placeholder="config?.placeholder == null ? '请选择' : config.placeholder"
+    :clearable="true"
+    :options="options"
+    :consistent-menu-width="false"
     class="form-component-string-enum"
   >
-    <a-select-option
-      v-for="item in options"
-      :key="item.value"
-      :value="item.value"
-    >
-      {{ item.label }}
-    </a-select-option>
-  </a-select>
+  </n-select>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { PropType, computed } from 'vue';
 
-export default defineComponent({
-  props: {
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    editFormData: {
-      type: [Object, Array],
-      default() {
-        return {};
-      },
-    },
-    objectKey: {
-      type: [String, Number],
-      default: '',
+const props = defineProps({
+  config: Object as PropType<{
+    placeholder?: string | null;
+    required?: boolean;
+    enum?: {
+      label: string;
+      value: string;
+    }[]
+  }>,
+  editFormData: {
+    type: Object as PropType<Record<string, unknown>>,
+    default() {
+      return {};
     },
   },
-
-  computed: {
-    options() {
-      return this.config.enum || [];
-    },
-  },
-  methods: {
+  name: String,
+  fieldName: String,
+  objectKey: {
+    type: [String, Number] as PropType<string|number>,
+    default: '',
   },
 });
+
+const options = computed(() => {
+  return props.config?.enum || [];
+});
+
 </script>
 
 <style lang="scss">

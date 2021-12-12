@@ -1,41 +1,48 @@
 <template>
-  <a-date-picker
-    v-model="editFormData[objectKey]"
-    show-time
-    :placeholder="config.placeholder == null ? '请选择' : config.placeholder"
-    class="form-component-date-time"
+  <n-date-picker
+    v-model:value="dateTime"
+    type="datetime"
+    clearable
+    :placeholder="props.config?.placeholder || '请选择'"
   />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { watch, ref, PropType } from 'vue';
 
-export default defineComponent({
-  props: {
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    editFormData: {
-      type: [Object, Array],
-      default() {
-        return {};
-      },
-    },
-    objectKey: {
-      type: [String, Number],
-      default: '',
+const props = defineProps({
+  config: Object as PropType<{
+    placeholder?: string | null;
+  }>,
+  editFormData: {
+    type: Object as PropType<Record<string, unknown>>,
+    default() {
+      return {};
     },
   },
-  methods: {
-
+  name: String,
+  fieldName: String,
+  objectKey: {
+    type: [String, Number] as PropType<string|number>,
+    default: '',
   },
 });
+const dateTime = ref<number | null>(props.editFormData[props.objectKey] ? new Date(props.editFormData[props.objectKey] + '').getTime() : null);
+
+watch(dateTime, (value) => {
+  props.editFormData[props.objectKey] = value ? new Date(value) : '';
+});
+
+watch([() => props.editFormData[props.objectKey]], ([value]) => {
+  if (value) {
+    const t = new Date(value + '');
+    if (t.getTime() !== dateTime.value) {
+      dateTime.value = t.getTime();
+    }
+  } else {
+    dateTime.value = null;
+  }
+});
+
 </script>
 
-<style lang="scss">
-.form-component-date-time {
-}
-</style>

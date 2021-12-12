@@ -89,7 +89,8 @@ export default defineComponent({
             display: inline-block;
          }
          >.filter-fields-wrap {
-            display: inline-block;
+          display: inline-block;
+          min-width: 80px;
          }
       }
    }

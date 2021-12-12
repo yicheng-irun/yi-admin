@@ -38,9 +38,9 @@ const YiAdminDemoSchema = new Schema<{
   },
   strEnumField: {
     type: String,
-    enum: ['哈哈哈', '嘿嘿嘿', '额额额', 'jjj'],
+    enum: ['哈哈哈', '嘿嘿嘿', '额额额', '哈哈哈哈哈哈哈哈哈哈哈哈', 'jjj'],
     filterType: new MongooseModelAdmin.FilterTypes.FilterSelectType({
-      options: ['哈哈哈', '嘿嘿嘿', '额额额', 'jjj'].map((item) => ({ label: item, value: item })),
+      options: ['哈哈哈', '嘿嘿嘿', '额额额', '哈哈哈哈哈哈哈哈哈哈哈哈', 'jjj'].map((item) => ({ label: item, value: item })),
     }),
   },
   strEnumField2: {

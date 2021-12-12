@@ -1,23 +1,26 @@
 <template>
-  <div class="model-admin-edit">
-    <a-breadcrumb separator=">">
-      <a-breadcrumb-item>
+  <div class="model-admin-edit-page">
+    <n-breadcrumb separator=">">
+      <n-breadcrumb-item>
         <a
           href="../../../"
           target="_top"
-        >首页</a>
-      </a-breadcrumb-item>
-      <a-breadcrumb-item>
+        >
+          首页
+        </a>
+      </n-breadcrumb-item>
+      <n-breadcrumb-item >
         <a
           href="../"
         >
           {{ state.modelInfo.title || state.modelInfo.name }} 管理
         </a>
-      </a-breadcrumb-item>
-      <a-breadcrumb-item>
+      </n-breadcrumb-item>
+      <n-breadcrumb-item >
         {{ state.modelInfo.title || state.modelInfo.name }} {{ state.editId ? '编辑' : '新增' }}
-      </a-breadcrumb-item>
-    </a-breadcrumb>
+      </n-breadcrumb-item>
+    </n-breadcrumb>
+
     <edit-form
       :edit-id="state.editId"
       :edit-form-fields="state.editFormFields"
@@ -61,7 +64,8 @@ export default defineComponent({
 body {
    background: #f5f6f7;
 }
-.model-admin-edit {
+.model-admin-edit-page {
+  padding: 1em 0;
   margin: 0 1.2em;
 }
 .ant-breadcrumb {

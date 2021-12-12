@@ -2,11 +2,11 @@
   <n-select
     v-model="filterFormData[objectKey]"
     :placeholder="config.placeholder == null ? '请选择' : config.placeholder"
-    :clearable="config.required ? false : true"
-    :allow-clear="true"
+    :clearable="true"
     :mode="config.multiSelect ? 'multiple' : undefined"
     class="filter-component-select"
     :options="options"
+    :consistent-menu-width="false"
     @change="$emit('reloadData')"
   >
   </n-select>

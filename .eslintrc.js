@@ -33,6 +33,7 @@ module.exports = {
     'vue/no-multiple-template-root': 'off',
     'vue/multi-word-component-names': 'off',
     'vue/no-mutating-props': 'off',
+    'vue/no-v-model-argument': 'off',
     'vue/html-indent': ['error', 2, {
       'attribute': 1,
       'baseIndent': 1,

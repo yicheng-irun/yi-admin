@@ -234,7 +234,6 @@ export class MongooseModelAdmin extends ModelAdminBase {
       item = await this.model.findById(id);
       if (!item) throw new Error('未找到该编辑项');
     } else {
-      // eslint-disable-next-line new-cap
       item = new (this.model)();
     }
 
@@ -263,7 +262,6 @@ export class MongooseModelAdmin extends ModelAdminBase {
         item.set(path, formData[path]);
       });
     } else {
-      // eslint-disable-next-line new-cap
       item = new (this.model)(formData);
     }
     await item.save();

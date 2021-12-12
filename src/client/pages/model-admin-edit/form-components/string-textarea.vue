@@ -1,39 +1,34 @@
 <template>
-  <a-input
-    v-model="editFormData[objectKey]"
+  <n-input
+    v-model:value="editFormData[objectKey]"
     type="textarea"
-    :placeholder="config.placeholder || ''"
-    :max-length="config.maxLength"
-    :auto-size="{ minRows: 2}"
-    class="form-component-string-textarea"
+    :placeholder="config?.placeholder || ''"
+    :max-length="config?.maxLength"
   />
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import { PropType } from 'vue';
 
-export default defineComponent({
-  props: {
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    editFormData: {
-      type: Object as PropType<Record<string, unknown>>,
-      default() {
-        return {};
-      },
-    },
-    objectKey: {
-      type: [String, Number],
-      default: '',
+defineProps({
+  config: Object as PropType<{
+    placeholder?: string | null;
+    maxLength?: number;
+  }>,
+  editFormData: {
+    type: Object as PropType<Record<string, unknown>>,
+    default() {
+      return {};
     },
   },
-  methods: {
+  name: String,
+  fieldName: String,
+  objectKey: {
+    type: [String, Number] as PropType<string|number>,
+    default: '',
   },
 });
+
 </script>
 
 <style lang="scss">

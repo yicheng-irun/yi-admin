@@ -3,10 +3,11 @@
     v-if="typeof value === 'boolean'"
     class="list-components-boolean"
   >
-    <n-icon
+    <!-- <n-icon
       :type="value ? 'check-circle' : 'close-circle'"
       :class="value ? 'success' : 'error'"
-    />
+    /> -->
+    {{ value ? '是' : '否' }}
   </div>
   <div v-else>
     {{ value }}

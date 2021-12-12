@@ -1,11 +1,15 @@
-import { App } from 'vue';
+import { App, inject } from 'vue';
 import vuex from 'vuex';
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
+
+const AxiosKey = 'yiadminAxios';
 
 export function axiosClientPlugin(baseURL: string, app: App) {
   const instance = axios.create({
     // baseURL,
   });
+
+  app.provide(AxiosKey, instance);
 
   app.config.globalProperties.$axios = instance;
   // @ts-ignore
@@ -13,3 +17,6 @@ export function axiosClientPlugin(baseURL: string, app: App) {
 }
 
 
+export function useAxios(): AxiosInstance {
+  return inject(AxiosKey) as AxiosInstance;
+}

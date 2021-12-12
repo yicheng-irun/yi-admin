@@ -41,7 +41,7 @@ export function createPageStore(ctx: {
     },
 
     mutations: {
-      setEditId(state, data) {
+      setEditId(state, data: { id: string }) {
         state.editId = data.id;
       },
 
