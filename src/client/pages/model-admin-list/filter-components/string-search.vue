@@ -8,29 +8,25 @@
   />
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import { PropType } from 'vue';
 
-export default defineComponent({
-  props: {
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    filterFormData: {
-      type: Object as PropType<Record<string, string>>,
-      default() {
-        return {};
-      },
-    },
-    objectKey: {
-      type: [String, Number],
-      default: '',
+defineProps({
+  config: {
+    type: Object,
+    default() {
+      return {};
     },
   },
-  methods: {
+  filterFormData: {
+    type: Object as PropType<Record<string, string>>,
+    default() {
+      return {};
+    },
+  },
+  objectKey: {
+    type: [String, Number],
+    default: '',
   },
 });
 </script>

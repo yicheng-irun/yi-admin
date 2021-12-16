@@ -10,7 +10,6 @@
         <n-select
           v-model="sortList[idx]"
           placeholder="请选择"
-          size="small"
           style="min-width:150px"
           :on-update:value="handleChange"
           :options="getOptions(idx)"
@@ -124,27 +123,27 @@ export default defineComponent({
 
 <style lang="scss">
 .table-sort-block {
-   >.action-lable {
-      line-height: 2.5em;
-   }
-   >.sort-item {
-      display: inline-block;
-      vertical-align: top;
-      margin: 0 0.5em 0 0.2em;
-      >.sort-item-info {
-         line-height: 2;
-         padding: 0 1em;
-      }
-   }
-   button.text-button {
-      border: none;
-      background: none;
-      font-size: 1em;
-      color: #409eff;
-      cursor: pointer;
-      &.danger {
-         color: #f56c6c;
-      }
-   }
+  >.action-lable {
+    line-height: 3em;
+  }
+  >.sort-item {
+    display: inline-block;
+    margin: 0 0.5em 0 0.2em;
+    vertical-align: top;
+    >.sort-item-info {
+      line-height: 2;
+      padding: 0 1em;
+    }
+  }
+  button.text-button {
+    border: none;
+    background: none;
+    font-size: 1em;
+    color: #409eff;
+    cursor: pointer;
+    &.danger {
+      color: #f56c6c;
+    }
+  }
 }
 </style>

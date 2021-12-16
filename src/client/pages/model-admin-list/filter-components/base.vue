@@ -1,31 +1,29 @@
 <template>
   <div
-    class="form-components-base"
+    class="filter-components-base"
     v-text="value"
   />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { PropType } from 'vue';
 
-export default defineComponent({
-  props: {
-    value: {
-      type: String,
-      default: '',
-    },
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
+defineProps({
+  value: {
+    type: String,
+    default: '',
+  },
+  config: {
+    type: Object as PropType<Record<string, string>>,
+    default() {
+      return {};
     },
   },
 });
 </script>
 
-<style lang="scss">
-.form-components-base {
-   color: #606266
+<style scoped lang="scss">
+.filter-components-base {
+  color: #606266
 }
 </style>

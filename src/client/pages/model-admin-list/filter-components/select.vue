@@ -7,42 +7,37 @@
     class="filter-component-select"
     :options="options"
     :consistent-menu-width="false"
-    @change="$emit('reloadData')"
+    @update:value="$emit('reloadData')"
   >
   </n-select>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import { computed, PropType } from 'vue';
 
-export default defineComponent({
-  props: {
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    filterFormData: {
-      type: Object as PropType<Record<string, string>>,
-      default() {
-        return {};
-      },
-    },
-    objectKey: {
-      type: [String, Number],
-      default: '',
+const props = defineProps({
+  config: {
+    type: Object,
+    default() {
+      return {};
     },
   },
-
-  computed: {
-    options() {
-      return this.config.options || [];
+  filterFormData: {
+    type: Object as PropType<Record<string, string>>,
+    default() {
+      return {};
     },
   },
-  methods: {
+  objectKey: {
+    type: [String, Number],
+    default: '',
   },
 });
+
+const options = computed(() => {
+  return props.config.options || [];
+});
+
 </script>
 
 <style lang="scss">

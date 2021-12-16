@@ -1,7 +1,6 @@
 <template>
   <n-space class="table-action">
     <n-button
-      dashed
       @click="$emit('createData')"
       type="primary"
     >

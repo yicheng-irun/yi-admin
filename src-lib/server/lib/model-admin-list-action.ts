@@ -12,15 +12,15 @@ export interface ListActionResult {
 
 /**
  * 按钮类型参考
- * https://www.antdv.com/components/button-cn/
+ * https://www.naiveui.com/zh-CN/os-theme/components/button
  */
-export type ButtonType = '' | 'primary' | 'dashed' | 'danger' | 'link';
+export type ButtonType = '' | 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error';
 
 /**
  * 列表页的用户动作类
  */
 export class ModelAdminListAction {
-   constructor (config: {
+  constructor(config: {
       /**
        * 动作名称在每一个model中应当是唯一的，两个对象拥有相同的actionName时，第一个会被执行，后面的不会被执行
        * 传入一个名字为`delete`的actionName，可以覆盖默认提供的删除操作
@@ -48,11 +48,16 @@ export class ModelAdminListAction {
       buttonType?: ButtonType;
 
       /**
+       * 按钮是否要显示dashed的样式
+       */
+      buttonDashed?: boolean;
+
+      /**
        * 按钮上的图标
        * 传递给前端a-button组件
        * 按钮图标参考
        * 此处类型声明暂只声明一部分
-       * https://www.antdv.com/components/icon-cn/
+       * https://www.iconfont.cn/manage/index?spm=a313x.7781069.1998910419.db775f1f3&manage_type=myprojects&projectId=2970375
        * 'edit' | 'share' | 'delete' | 'search' | 'upload'
        */
       buttonIcon?: string;
@@ -61,59 +66,67 @@ export class ModelAdminListAction {
        */
       actionFunc: (idList: string[]) => Promise<ListActionResult>;
    }) {
-      if (!config.actionName) throw new Error('actionName 不能为空');
-      this.actionName = config.actionName;
-      if (typeof config.isBatchAction === 'boolean') {
-         this.isBatchAction = config.isBatchAction;
-      }
-      if (typeof config.isTableRowAction === 'boolean') {
-         this.isTableRowAction = config.isTableRowAction;
-      }
-      if (typeof config.popConfirm === 'boolean') {
-         this.popConfirm = config.popConfirm;
-      }
-      if (typeof config.buttonType === 'string') {
-         this.buttonType = config.buttonType;
-      }
-      if (typeof config.buttonIcon === 'string') {
-         this.buttonIcon = config.buttonIcon;
-      }
+    if (!config.actionName) throw new Error('actionName 不能为空');
+    this.actionName = config.actionName;
+    if (typeof config.isBatchAction === 'boolean') {
+      this.isBatchAction = config.isBatchAction;
+    }
+    if (typeof config.isTableRowAction === 'boolean') {
+      this.isTableRowAction = config.isTableRowAction;
+    }
+    if (typeof config.popConfirm === 'boolean') {
+      this.popConfirm = config.popConfirm;
+    }
+    if (typeof config.buttonType === 'string') {
+      this.buttonType = config.buttonType;
+    }
+    if (typeof config.buttonIcon === 'string') {
+      this.buttonIcon = config.buttonIcon;
+    }
+    if (typeof config.buttonDashed === 'boolean') {
+      this.buttonDashed = config.buttonDashed;
+    }
 
-      this.actionFunc = config.actionFunc;
-   }
+    this.actionFunc = config.actionFunc;
+  }
 
-   /**
+  /**
     * 这个操作的名称
     */
-   public actionName: string;
+  public actionName: string;
 
-   /**
+  /**
     * 这个列表操作是否支持批量操作,用于展示在表格的顶端
     */
-   public isBatchAction = true;
+  public isBatchAction = true;
 
-   /**
+  /**
     * 这个操作是否在表格中显示
     */
-   public isTableRowAction = true;
+  public isTableRowAction = true;
 
-   /**
+  /**
     * 这个操作是否需要弹窗确认
     */
-   public popConfirm = true;
+  public popConfirm = true;
 
-   /**
+  /**
     * 按钮样式
     */
-   public buttonType: ButtonType = '';
+  public buttonType: ButtonType = '';
 
-   /**
+  /**
+       * 按钮是否要显示dashed的样式
+       */
+  public buttonDashed = false;
+
+  /**
     * 按钮的图标
     */
-   public buttonIcon = '';
+  public buttonIcon = '';
 
-   /**
+  /**
     * 执行批量操作的回调函数, 如果执行失败请返回一个错误new Error("错误标题")，错误标题会显示给用户
     */
-   public actionFunc: (idList: string[]) => Promise<ListActionResult>
+  public actionFunc: (idList: string[]) => Promise<ListActionResult>;
 }

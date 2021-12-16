@@ -43,9 +43,8 @@ export default defineComponent({
 });
 </script>
 
-<style lang="stylus">
+<style lang="scss">
 .list-components-string-enum {
-   // font-size 1.5em
-   text-align center
+  text-align:center
 }
 </style>

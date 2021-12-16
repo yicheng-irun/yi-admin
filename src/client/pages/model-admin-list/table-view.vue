@@ -99,37 +99,42 @@
                   <a :href="`edit/?id=${item.id}`">{{ item.id }}</a>
                 </td>
                 <td class="actions-td">
-                  <template
-                    v-for="(actionItem, actionIndex) in rowListActions"
-                  >
-                    <n-popconfirm
-                      v-if="actionItem.popConfirm"
-                      :key="actionIndex"
-                      title="确定执行这个操作吗？"
-                      ok-text="是"
-                      cancel-text="否"
-                      :ok-type="actionItem.buttonType || 'primary'"
-                      @confirm="doActions(actionItem, [item.id])"
+                  <n-space>
+                    <template
+                      v-for="(actionItem, actionIndex) in rowListActions"
                     >
+                      <n-popconfirm
+                        v-if="actionItem.popConfirm"
+                        :key="actionIndex"
+                        positive-text="是"
+                        negative-text="否"
+                        :on-positive-click="() => doActions(actionItem, [item.id])"
+                      >
+                        <template #trigger>
+                          <n-button
+                            size="small"
+                            :type="actionItem.buttonType || ''"
+                            :dashed="!!actionItem.buttonDashed"
+                          >
+                            <Icon v-if="actionItem.buttonIcon" :icon="actionItem.buttonIcon" ></Icon>
+                            {{ actionItem.actionName }}
+                          </n-button>
+                        </template>
+                        <div>确定执行这个操作吗？</div>
+                      </n-popconfirm>
                       <n-button
+                        v-else
+                        :key="actionIndex + 'b'"
                         size="small"
                         :type="actionItem.buttonType || ''"
-                        :icon="actionItem.buttonIcon || ''"
+                        @click="() => doActions(actionItem, [item.id])"
+                        :dashed="!!actionItem.buttonDashed"
                       >
+                        <Icon v-if="actionItem.buttonIcon" :icon="actionItem.buttonIcon" ></Icon>
                         {{ actionItem.actionName }}
                       </n-button>
-                    </n-popconfirm>
-                    <n-button
-                      v-else
-                      :key="actionIndex + 'b'"
-                      size="small"
-                      :type="actionItem.buttonType || ''"
-                      :icon="actionItem.buttonIcon || ''"
-                      @click="doActions(actionItem, [item.id])"
-                    >
-                      {{ actionItem.actionName }}
-                    </n-button>
-                  </template>
+                    </template>
+                  </n-space>
                 </td>
                 <td
                   v-for="(fieldItem, fieldIndex) in listFields"
@@ -161,18 +166,24 @@
             >第1页</a> </span>
           </div>
         </div>
-        <div v-if="false" class="table-view-footer">
-          <n-pagination
-            :current="pageIndex"
-            :page-size-options="['10', '20', '50', '100', '200']"
-            :page-size="state.pageSize"
-            :total="state.total"
-            :show-total="(total: number) => `总共 ${total} 项记录`"
-            show-size-changer
-            show-quick-jumper
-            @showSizeChange="handleSizeChange"
-            @change="handleCurrentChange"
-          />
+        <div class="table-view-footer">
+          <no-ssr>
+            <n-pagination
+              :page="pageIndex"
+              :page-size="state.pageSize"
+              :page-count="Math.ceil(state.total / state.pageSize)"
+              :show-total="(total: number) => `总共 ${total} 项记录`"
+              show-size-picker
+              :page-sizes="[10, 20, 50, 100, 200]"
+              show-quick-jumper
+              :on-update:page="(page: number) => handleCurrentChange(page)"
+              :on-update:page-size="(size: number) => handleSizeChange(size)"
+            >
+              <template #prefix>
+                共{{ state.total }}项记录
+              </template>
+            </n-pagination>
+          </no-ssr>
         </div>
       </div>
     </n-spin>
@@ -181,7 +192,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { notification } from 'ant-design-vue';
 import ListComponents from './list-components';
 import { ListActionsItem, ListDataItem, ListFieldsItem, ModelAdminListStateType } from './store';
 import TableSort from './table-sort.vue';
@@ -297,30 +307,37 @@ export default defineComponent({
         this.$set(this.listCheckedStatusArray, i, v);
       }
     },
-    async handleSizeChange(a, v) {
+    async handleSizeChange(pageSize: number) {
       this.$store.commit('setPageIndex', 1);
-      this.$store.commit('setPageSize', v);
+      this.$store.commit('setPageSize', pageSize);
       try {
         await this.$store.dispatch('fetchListData');
       } catch (e) {
-        notification.error({
-          message: '出错了',
-          description: e?.message || '拉取数据出错了',
-        });
+        if (e instanceof Error) {
+          this.$notification.error({
+            title: '出错了',
+            description: e?.message || '拉取数据出错了',
+            duration: 3000,
+          });
+        }
       }
     },
-    handleCurrentChange(v) {
+    handleCurrentChange(v: number) {
+      console.log(11111, v);
       const oldPageIndex = this.state.pageIndex;
-      this.$store.commit('setPageIndex', 0); // 这么做是禁止element的翻页组件提前跳页
+      // this.$store.commit('setPageIndex', 0); // 这么做是禁止element的翻页组件提前跳页
       this.$nextTick(async () => {
         this.$store.commit('setPageIndex', oldPageIndex); // 这么做是触发
         try {
           await this.$store.dispatch('fetchListData', { pageIndex: v });
         } catch (e) {
-          notification.error({
-            message: '出错了',
-            description: e?.message || '拉取数据出错了',
-          });
+          if (e instanceof Error) {
+            this.$notification.error({
+              title: '出错了',
+              description: e?.message || '拉取数据出错了',
+              duration: 3000,
+            });
+          }
         }
       });
     },
@@ -333,19 +350,20 @@ export default defineComponent({
       try {
         await this.$store.dispatch('fetchListData');
       } catch (e) {
-        notification.error({
-          message: '出错了',
-          description: e?.message || '拉取数据出错了',
-        });
+        if (e instanceof Error) {
+          this.$notification.error({
+            title: '出错了',
+            description: e?.message || '拉取数据出错了',
+            duration: 3000,
+          });
+        }
       }
     },
 
     async doBatchAction(actionObj: ListActionsItem | null) {
       const idList = this.checkedIdList;
       if (idList.length <= 0) {
-        notification.error({
-          message: '未勾选任何项目',
-        });
+        this.$message.error('未勾选任何项目');
         return;
       }
       if (actionObj) {
@@ -354,7 +372,6 @@ export default defineComponent({
     },
 
     async doActions(actionObj: ListActionsItem, ids: string[] = []) {
-      if (this.state.loading) return;
       if (this.state.loading) return;
       this.$store.commit('setLoading', true);
       try {
@@ -368,18 +385,22 @@ export default defineComponent({
             successfulNum = 0,
             failedNum = 0,
           } = result.data || {};
-          notification.success({
-            message: `${actionObj.actionName} 执行完成`,
+          this.$notification.success({
+            title: `${actionObj.actionName} 执行完成`,
             description: `${successfulNum} 项执行成功，${failedNum} 项执行失败`,
+            duration: 3000,
           });
         } else {
           throw new Error(result?.message || `执行 ${actionObj.actionName} 操作失败了`);
         }
       } catch (e) {
-        notification.error({
-          message: `${actionObj.actionName} 未执行完成`,
-          description: e?.message || `执行 ${actionObj.actionName} 操作失败了`,
-        });
+        if (e instanceof Error) {
+          this.$notification.error({
+            title: `${actionObj.actionName} 未执行完成`,
+            description: e?.message || `执行 ${actionObj.actionName} 操作失败了`,
+            duration: 3000,
+          });
+        }
       } finally {
         this.$store.commit('setLoading', false);
       }
@@ -387,10 +408,13 @@ export default defineComponent({
       try {
         await this.$store.dispatch('fetchListData');
       } catch (e) {
-        notification.error({
-          message: '出错了',
-          description: e?.message || '拉取数据出错了',
-        });
+        if (e instanceof Error) {
+          this.$notification.error({
+            title: '出错了',
+            description: e?.message || '拉取数据出错了',
+            duration: 3000,
+          });
+        }
       }
     },
   },
@@ -414,9 +438,6 @@ export default defineComponent({
         &.dashed>.ant-select-selection {
           border-style: dashed;
         }
-      }
-      >.ant-btn {
-        margin: 0 0.3em;
       }
       >.action-lable {
         margin: 0 0.8em 0 0;
@@ -471,9 +492,6 @@ export default defineComponent({
               }
               &.actions-td {
                 text-align: center;
-                .ant-btn {
-                    margin: 0.1em;
-                }
               }
               >.fields-wrap {
                 text-align: center;
@@ -493,11 +511,10 @@ export default defineComponent({
       }
     }
     >.table-view-footer {
-        border-top: 1px dashed #0003;
-        line-height: 3em;
-        background: #fff;
-        padding: 1em 1em;
-        color: #000a;
+      border-top: 1px dashed #0003;
+      background: #fff;
+      padding: 1em 1em;
+      color: #000a;
     }
   }
 }

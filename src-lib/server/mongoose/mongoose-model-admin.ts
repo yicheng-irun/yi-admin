@@ -209,7 +209,7 @@ export class MongooseModelAdmin extends ModelAdminBase {
           failedNum: idList.length - (result.deletedCount || 0),
         };
       },
-      buttonType: 'danger',
+      buttonType: 'error',
       buttonIcon: 'delete',
     }));
   }

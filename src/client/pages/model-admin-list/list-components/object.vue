@@ -5,24 +5,16 @@
   />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  model: {
-    prop: 'value',
-    event: 'input',
+<script setup lang="ts">
+defineProps({
+  value: {
+    type: Object,
+    default: null,
   },
-  props: {
-    value: {
-      type: Object,
-      default: null,
-    },
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
+  config: {
+    type: Object,
+    default() {
+      return {};
     },
   },
 });

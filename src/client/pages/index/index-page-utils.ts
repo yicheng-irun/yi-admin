@@ -1,6 +1,6 @@
 import { h, RendererElement, RendererNode, VNode } from 'vue';
 import { SiteMenu } from './index.store';
-import Icon from '../../components/icon.vue';
+import Icon from '../../components/Icon.vue';
 
 
 function renderIcon(icon: string) {

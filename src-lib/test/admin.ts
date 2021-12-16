@@ -67,7 +67,8 @@ myadmin.addModelAdmin(new MongooseModelAdmin({
       },
       isBatchAction: true,
       isTableRowAction: false,
-      buttonType: 'dashed',
+      buttonType: 'primary',
+      buttonDashed: true,
     }),
 
     new ModelAdminListAction({
@@ -77,8 +78,8 @@ myadmin.addModelAdmin(new MongooseModelAdmin({
         failedNum: 0,
       }),
       popConfirm: false,
-      buttonType: 'dashed',
-      buttonIcon: 'check-circle',
+      buttonDashed: true,
+      buttonIcon: 'ok',
     }),
 
     new ModelAdminListAction({

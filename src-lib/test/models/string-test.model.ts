@@ -43,3 +43,15 @@ const StringTestSchema = new Schema<{
 
 const StringTestModel = model('string-test', StringTestSchema);
 export default StringTestModel;
+
+
+// setTimeout(async () => {
+//   for (let i = 0; i < 100; i += 1) {
+//     const t = new StringTestModel({
+//       strField2: 'xxxxxxxxxxxx' + new Date(),
+//       strField3: Math.random() + '',
+//     });
+//     console.log(t);
+//     await t.save();
+//   }
+// }, 1000);

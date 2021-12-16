@@ -39,7 +39,8 @@ export default defineComponent({
 
 <style lang="scss">
 .list-components-boolean {
-   font-size: 1.5em;
+   font-size: 1em;
+   font-weight: bold;
    >.success {
       color: #52c41a;
    }

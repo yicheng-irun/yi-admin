@@ -4,6 +4,7 @@ export interface ListActionsItem {
    actionName: string;
    buttonIcon: string;
    buttonType: string;
+   buttonDashed?: boolean;
    isBatchAction: boolean;
    isTableRowAction: boolean;
    popConfirm: boolean;

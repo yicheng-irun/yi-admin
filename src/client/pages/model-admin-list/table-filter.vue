@@ -75,34 +75,35 @@ export default defineComponent({
 
 <style lang="scss">
 .table-filter {
-   >.action-lable {
-      line-height: 2.5em;
-   }
-   >.filter-item {
-      display: inline-block;
-      vertical-align: top;
-      margin: 0 1em 1em 0em;
-      >.filter-item-wrap {
-         >.filter-item-label {
-            color: #000;
-            margin: 0 0.2em 0 0;
-            display: inline-block;
-         }
-         >.filter-fields-wrap {
-          display: inline-block;
-          min-width: 80px;
-         }
+  >.action-lable {
+    line-height: 2.5em;
+  }
+  >.filter-item {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 1em 1em 0em;
+    >.filter-item-wrap {
+      >.filter-item-label {
+        color: #000;
+        margin: 0 0.2em 0 0;
+        display: inline-block;
       }
-   }
-   button.text-button {
-      border: none;
-      background: none;
-      font-size: 1em;
-      color: #409eff;
-      cursor: pointer;
-      &.danger {
-         color: #f56c6c;
+      >.filter-fields-wrap {
+        display: inline-block;
+        min-width: 80px;
+        vertical-align: middle;
       }
-   }
+    }
+  }
+  button.text-button {
+    border: none;
+    background: none;
+    font-size: 1em;
+    color: #409eff;
+    cursor: pointer;
+    &.danger {
+      color: #f56c6c;
+    }
+  }
 }
 </style>
