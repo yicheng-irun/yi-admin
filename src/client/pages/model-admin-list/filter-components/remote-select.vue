@@ -1,6 +1,6 @@
 <template>
   <n-select
-    v-model="filterFormData[objectKey]"
+    v-model:value="filterFormData[objectKey]"
     :placeholder="config.placeholder == null ? '搜索和选择' : config.placeholder"
     filterable
     :clearable="true"

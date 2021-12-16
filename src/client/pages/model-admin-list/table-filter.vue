@@ -23,7 +23,7 @@
                 :object-key="fItem.fieldName"
                 :config="fItem.componentConfig"
                 :field-name="fItem.fieldName"
-                @reloadData="reloadData"
+                @reloadData="() => emit('reloadData')"
               />
             </div>
           </div>
@@ -35,42 +35,35 @@
       dashed
       type="primary"
       icon="search"
-      @click="reloadData"
+      @click="emit('reloadData')"
     >
       查找
     </n-button>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 import FilterComponents from './filter-components';
-import { ListFilterFieldsItem, ModelAdminListStateType } from './store';
+import { ModelAdminListStateType } from './store';
 
-export default defineComponent({
-  components: {},
-  computed: {
-    state(): ModelAdminListStateType {
-      return this.$store.state;
-    },
-    filterFields(): ListFilterFieldsItem[] {
-      return this.state.filterFields;
-    },
-    filterForm(): Record<string, unknown> {
-      return this.state.filterForm;
-    },
-  },
-  methods: {
-    getComponent(componentName: string) {
-      if (Object.prototype.hasOwnProperty.call(FilterComponents, componentName)) {
-        return FilterComponents[componentName];
-      }
-      return FilterComponents.base;
-    },
-    reloadData() {
-      this.$emit('reloadData');
-    },
-  },
+const { state } = useStore<ModelAdminListStateType>();
+const emit = defineEmits(['reloadData']);
+
+const filterFields = computed(() => {
+  return state.filterFields;
 });
+
+const filterForm = computed(() => {
+  return state.filterForm;
+});
+
+function getComponent(componentName: string) {
+  if (Object.prototype.hasOwnProperty.call(FilterComponents, componentName)) {
+    return FilterComponents[componentName];
+  }
+  return FilterComponents.base;
+}
 </script>
 
 <style lang="scss">

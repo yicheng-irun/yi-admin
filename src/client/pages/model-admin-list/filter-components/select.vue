@@ -1,6 +1,6 @@
 <template>
   <n-select
-    v-model="filterFormData[objectKey]"
+    v-model:value="filterFormData[objectKey]"
     :placeholder="config.placeholder == null ? '请选择' : config.placeholder"
     :clearable="true"
     :mode="config.multiSelect ? 'multiple' : undefined"

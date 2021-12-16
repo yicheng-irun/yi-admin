@@ -1,6 +1,6 @@
 <template>
   <n-input
-    v-model="filterFormData[objectKey]"
+    v-model:value="filterFormData[objectKey]"
     :placeholder="config.placeholder || ``"
     :max-length="config.maxLength"
     class="filter-component-string"

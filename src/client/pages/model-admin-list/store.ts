@@ -188,7 +188,7 @@ export function createPageStore() {
             params: {
               pageIndex,
               pageSize: state.pageSize,
-              sort: state.sortList.join(' '),
+              sort: state.sortList.filter((t) => !!t).join(' '),
               filter: JSON.stringify(state.filterForm),
             },
           });

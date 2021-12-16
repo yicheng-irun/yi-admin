@@ -2,17 +2,16 @@
   <div class="table-sort-block">
     <span class="action-lable">排序:</span>
     <div
-      v-for="(sitem, idx) in sortList"
+      v-for="(optionsItems, idx) in sortOptionsList"
       :key="idx"
       class="sort-item"
     >
       <no-ssr>
         <n-select
-          v-model="sortList[idx]"
+          v-model:value="state.sortList[idx]"
           placeholder="请选择"
           style="min-width:150px"
-          :on-update:value="handleChange"
-          :options="getOptions(idx)"
+          :options="optionsItems"
         >
         </n-select>
       </no-ssr>
@@ -36,88 +35,74 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { ListFieldsItem, ModelAdminListStateType } from './store';
+<script setup lang="ts">
+import { computed, watch } from 'vue';
+import { useStore } from 'vuex';
+import { ModelAdminListStateType } from './store';
 
-export default defineComponent({
-  computed: {
-    state(): ModelAdminListStateType {
-      return this.$store.state;
-    },
-    listFields(): ListFieldsItem[] {
-      return this.state.listFields || [];
-    },
-    sortList(): string[] {
-      return this.state.sortList;
-    },
-    sortOptions(): {
-      label: string;
-      value: string;
-    }[] {
-      const options = [];
-      options.push({
-        label: '+ id 增序',
-        value: '_id',
-      }, {
-        label: '- id 降序',
-        value: '-_id',
-      });
-      for (let i = 0; i < this.listFields.length; i += 1) {
-        const field = this.listFields[i];
-        const fieldNameAlias = field.fieldNameAlias || field.fieldName;
-        options.push({
-          label: `${fieldNameAlias} 增序(+)`,
-          value: `${field.fieldName}`,
-        }, {
-          label: `${fieldNameAlias} 降序(-)`,
-          value: `-${field.fieldName}`,
-        });
-      }
-      return options;
-    },
+interface SelectOption {
+  label: string;
+  value: string;
+}
 
-  },
-  methods: {
-    getOptions(index: number) {
-      const options = this.sortOptions;
-      const newOptions = [];
-      const sortList = [...this.sortList].slice(0, index);
-      for (let i = 0; i < options.length; i += 2) {
-        const option1 = options[i];
-        const option2 = options[i + 1];
-        if (sortList.includes(option1.value) || sortList.includes(option2.value)) {
-          //
-        } else {
-          newOptions.push(option1, option2);
-        }
+const { state } = useStore<ModelAdminListStateType>();
+
+const emit = defineEmits(['reloadData']);
+
+function getSortOptions(): SelectOption[] {
+  const options : SelectOption[]= [];
+  options.push({
+    label: '+ id 增序',
+    value: '_id',
+  }, {
+    label: '- id 降序',
+    value: '-_id',
+  });
+  for (let i = 0; i < state.listFields.length; i += 1) {
+    const field = state.listFields[i];
+    const fieldNameAlias = field.fieldNameAlias || field.fieldName;
+    options.push({
+      label: `${fieldNameAlias} 增序(+)`,
+      value: `${field.fieldName}`,
+    }, {
+      label: `${fieldNameAlias} 降序(-)`,
+      value: `-${field.fieldName}`,
+    });
+  }
+  return options;
+}
+
+const sortOptionsList = computed((): SelectOption[][] => {
+  const sortOptions = getSortOptions();
+  const result: SelectOption[][] = state.sortList.map((item, index) => {
+    const newOptions: SelectOption[] = [];
+    for (let i = 0; i < sortOptions.length; i += 2) {
+      const option1 = sortOptions[i];
+      const option2 = sortOptions[i + 1];
+      if (item === option1.value || item === option2.value) {
+        newOptions.push(option1, option2);
+      } else if (state.sortList.includes(option1.value) || state.sortList.includes(option2.value)) {
+        //
+      } else {
+        newOptions.push(option1, option2);
       }
-      return newOptions;
-    },
-    createNewRule() {
-      this.sortList.push('');
-    },
-    removeRule(index: number) {
-      this.sortList.splice(index, 1);
-    },
-    clearRules() {
-      const { sortList } = this;
-      const newSortList: string[] = [];
-      const containerSortList: string[] = [];
-      for (let i = 0; i < sortList.length; i += 1) {
-        const t = sortList[i];
-        const c = t.replace(/^-/, '');
-        if (!containerSortList.includes(c)) {
-          newSortList.push(t);
-          containerSortList.push(c);
-        }
-      }
-      this.state.sortList = newSortList;
-    },
-    handleChange() {
-      this.clearRules();
-    },
-  },
+    }
+    return newOptions;
+  });
+
+  return result;
+});
+
+function removeRule(index: number) {
+  state.sortList.splice(index, 1);
+}
+
+function createNewRule() {
+  state.sortList.push('');
+}
+
+watch(state.sortList, () => {
+  emit('reloadData');
 });
 </script>
 

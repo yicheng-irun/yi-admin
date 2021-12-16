@@ -10,10 +10,10 @@
           @createData="createData"
           @reloadData="reloadData"
         />
-        <TableSort class="top-action-row" />
+        <TableSort class="top-action-row" @reload-data="reloadData" />
         <TableFilter
           class="top-action-row"
-          @reloadData="reloadData"
+          @reload-data="reloadData"
         />
 
         <div class="top-action-row">
@@ -284,13 +284,6 @@ export default defineComponent({
       return isCheckedAll;
     },
   },
-  watch: {
-    'state.sortList': function _() {
-      this.$nextTick(() => {
-        this.reloadData();
-      });
-    },
-  },
   methods: {
     getComponent(componentName: string) {
       if (Object.prototype.hasOwnProperty.call(ListComponents, componentName)) {
@@ -323,7 +316,6 @@ export default defineComponent({
       }
     },
     handleCurrentChange(v: number) {
-      console.log(11111, v);
       const oldPageIndex = this.state.pageIndex;
       // this.$store.commit('setPageIndex', 0); // 这么做是禁止element的翻页组件提前跳页
       this.$nextTick(async () => {
