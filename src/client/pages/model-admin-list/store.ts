@@ -25,8 +25,8 @@ export interface ListFilterFieldsItem {
 }
 
 export interface ListDataItem {
-   id: string;
-   [key: string]: unknown;
+  id: string;
+  values: Record<string, unknown>
 }
 
 export interface ModelAdminListStateType {

@@ -17,47 +17,51 @@
         />
 
         <div class="top-action-row">
-          <span class="action-lable">对选中项进行</span>
-          <no-ssr>
-            <n-select
-              v-if="checkedIdList"
-              v-model="batchActionIndex"
-              placeholder="请选择操作"
-              style="min-width: 150px"
-              :class="checkedIdList.length === 0 ? 'dashed' : ''"
-              :options="batchActionOptions"
-            ></n-select>
-          </no-ssr>
-          <n-popconfirm
-            v-if="selectedBatchAction && selectedBatchAction.popConfirm"
-            title="确定执行这个操作吗？"
-            ok-text="是"
-            cancel-text="否"
-            :ok-type="selectedBatchAction.buttonType || 'primary'"
-            @positive-click="doBatchAction(selectedBatchAction)"
-          >
+          <n-space>
+            <span class="action-label">对选中项进行</span>
+            <no-ssr>
+              <n-select
+                v-if="checkedIdList"
+                v-model:value="batchActionIndex"
+                placeholder="请选择操作"
+                style="min-width: 150px"
+                :class="checkedIdList.length === 0 ? 'dashed' : ''"
+                :options="batchActionOptions"
+              ></n-select>
+            </no-ssr>
+            <n-popconfirm
+              v-if="selectedBatchAction && selectedBatchAction.popConfirm"
+              positive-text="是"
+              negative-text="否"
+              :on-positive-click="() => doBatchAction(selectedBatchAction)"
+            >
+              <template #trigger>
+                <n-button
+                  :type="selectedBatchAction.buttonType || ''"
+                  :dashed="!!selectedBatchAction.buttonDashed"
+                >
+                  <Icon v-if="selectedBatchAction.buttonIcon" :icon="selectedBatchAction.buttonIcon" ></Icon>
+                  执行
+                </n-button>
+              </template>
+              <span>确定执行这个操作吗？</span>
+            </n-popconfirm>
             <n-button
-              :type="selectedBatchAction.buttonType || 'default'"
+              v-else-if="selectedBatchAction"
+              :type="selectedBatchAction.buttonType || ''"
+              :dashed="!!selectedBatchAction.buttonDashed"
+              @click="doBatchAction(selectedBatchAction)"
             >
               <Icon v-if="selectedBatchAction.buttonIcon" :icon="selectedBatchAction.buttonIcon" ></Icon>
               执行
             </n-button>
-          </n-popconfirm>
-          <n-button
-            v-else
-            :type="(selectedBatchAction && selectedBatchAction.buttonType) || 'default'"
-            :disabled="selectedBatchAction == null"
-            @click="doBatchAction(selectedBatchAction)"
-          >
-            <Icon v-if="selectedBatchAction && selectedBatchAction.buttonIcon" :icon="selectedBatchAction.buttonIcon" ></Icon>
-            执行
-          </n-button>
-          <span
-            v-if="checkedIdList"
-            class="batch-action-helptext"
-          >
-            {{ checkedIdList.length === 0 ? '当前未勾选任何项目' : `已选中${checkedIdList.length}条记录` }}
-          </span>
+            <span
+              v-if="checkedIdList"
+              class="batch-action-help-text"
+            >
+              {{ checkedIdList.length === 0 ? '当前未勾选任何项目' : `已选中${checkedIdList.length}条记录` }}
+            </span>
+          </n-space>
         </div>
       </div>
       <div class="panel-box">
@@ -65,12 +69,14 @@
           <table class="table-view-table">
             <thead class="table-view-thead">
               <tr>
-                <!-- <th class="checkbox-all">
-                  <n-checkbox
-                    :checked="allChecked"
-                    @on-update:checked="handelCheckAll"
-                  />
-                </th> -->
+                <th class="checkbox-all">
+                  <no-ssr>
+                    <n-checkbox
+                      :checked="allChecked"
+                      :on-update:checked="handelCheckAll"
+                    />
+                  </no-ssr>
+                </th>
                 <th>#</th>
                 <th>id</th>
                 <th>操作</th>
@@ -91,7 +97,7 @@
                 v-for="(item, index) in listData"
                 :key="item.id || index"
               >
-                <!-- <td><n-checkbox v-model="listCheckedStatusArray[index]" /></td> -->
+                <td><n-checkbox v-model:checked="listCheckedStatusArray[index]" /></td>
                 <td class="index-td">
                   {{ index + 1 }}
                 </td>
@@ -208,7 +214,6 @@ export default defineComponent({
   },
   data() {
     return {
-      pageIdx: 0,
       batchActionIndex: '',
     };
   },
@@ -250,10 +255,16 @@ export default defineComponent({
       return this.listActions.filter((t: ListActionsItem) => t.isBatchAction);
     },
     batchActionOptions(): {
-        value: number;
+        value: number | string;
         label: any;
       }[] { // 批量操作的下拉选择框选项
-      const options = [];
+      const options: {
+        value: number | string;
+        label: any;
+      }[] = [{
+        value: '',
+        label: '请选择',
+      }];
       const actions = this.betListActions;
       for (let i = 0; i < actions.length; i += 1) {
         const element = actions[i];
@@ -297,7 +308,7 @@ export default defineComponent({
         v = false;
       }
       for (let i = 0; i < this.listCheckedStatusArray.length; i += 1) {
-        this.$set(this.listCheckedStatusArray, i, v);
+        this.listCheckedStatusArray[i] = v;
       }
     },
     async handleSizeChange(pageSize: number) {
@@ -419,25 +430,15 @@ export default defineComponent({
   .top-action {
     padding: 0.8em 0 0.5em;
     >.top-action-row {
-      font-size: 0.9em;
-      color: #000a;
-      padding: 0.6em 0;
-      >.n-select {
-        display: inline-block;
-        margin: 0 0.8em 0 0;
-        width: auto;
-        vertical-align: middle;
-        &.dashed>.ant-select-selection {
-          border-style: dashed;
-        }
+      // font-size: 0.9em;
+      // color: #000a;
+      margin: 0.8em 0;
+      .action-label {
+        line-height: 3;
       }
-      >.action-lable {
-        margin: 0 0.8em 0 0;
-      }
-      >.batch-action-helptext {
-        font-size: 12px;
-        margin: 0 0.3em;
-        padding: 0 0.3em;
+
+      .batch-action-help-text {
+        line-height: 3;
       }
     }
   }
