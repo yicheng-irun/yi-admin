@@ -4,12 +4,14 @@
     :placeholder="config.placeholder || ``"
     :max-length="config.maxLength"
     class="filter-component-string"
-    @pressEnter="$emit('reloadData')"
+    @keydown.enter="emit('reloadData')"
   />
 </template>
 
 <script setup lang="ts">
 import { PropType } from 'vue';
+
+const emit = defineEmits(['reloadData']);
 
 defineProps({
   config: {

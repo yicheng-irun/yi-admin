@@ -9,27 +9,41 @@
       :key="idx"
       class="filter-item"
     >
-      <n-tooltip
-        trigger="hover"
-        :title="fItem.componentConfig.tip"
-      >
-        <template #trigger>
-          <div class="filter-item-wrap">
-            <label class="filter-item-label">{{ fItem.fieldNameAlias || fItem.fieldName }}: </label>
-            <div class="filter-fields-wrap">
-              <component
-                :is="getComponent(fItem.componentName)"
-                :filter-form-data="filterForm"
-                :object-key="fItem.fieldName"
-                :config="fItem.componentConfig"
-                :field-name="fItem.fieldName"
-                @reloadData="() => emit('reloadData')"
-              />
+      <template v-if="fItem.componentConfig.tip">
+        <n-tooltip
+          trigger="hover"
+        >
+          <template #trigger>
+            <div class="filter-item-wrap">
+              <label class="filter-item-label">{{ fItem.fieldNameAlias || fItem.fieldName }}: </label>
+              <div class="filter-fields-wrap">
+                <component
+                  :is="getComponent(fItem.componentName)"
+                  :filter-form-data="filterForm"
+                  :object-key="fItem.fieldName"
+                  :config="fItem.componentConfig"
+                  :field-name="fItem.fieldName"
+                  @reload-data="() => emit('reloadData')"
+                />
+              </div>
             </div>
-          </div>
-        </template>
-        <span>{{ fItem.componentConfig.tip || "暂无提示" }}</span>
-      </n-tooltip>
+          </template>
+          <span>{{ fItem.componentConfig.tip }}</span>
+        </n-tooltip>
+      </template>
+      <div v-else class="filter-item-wrap">
+        <label class="filter-item-label">{{ fItem.fieldNameAlias || fItem.fieldName }}: </label>
+        <div class="filter-fields-wrap">
+          <component
+            :is="getComponent(fItem.componentName)"
+            :filter-form-data="filterForm"
+            :object-key="fItem.fieldName"
+            :config="fItem.componentConfig"
+            :field-name="fItem.fieldName"
+            @reload-data="() => emit('reloadData')"
+          />
+        </div>
+      </div>
     </div>
     <n-button
       dashed
