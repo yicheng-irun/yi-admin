@@ -1,6 +1,6 @@
 import express, { NextFunction } from 'express';
 import { resolve } from 'path';
-import url from 'url';
+import url, { URL } from 'url';
 import bodyParse from 'co-body';
 import { IncomingForm, Files, Fields } from 'formidable';
 import { YiAdmin } from './yi-admin';
@@ -74,27 +74,29 @@ function getBaseRenderSSRParams(yiAdmin: YiAdmin, req: express.Request, res: exp
   };
 }
 
+function checkRedirectMiddleware(req: Request, res: Response, next): boolean {
+  const url = new URL('https://test.com' + req.originalUrl);
+  if (!url.pathname.endsWith('/')) {
+    url.pathname += '/';
+    res.redirect(url.pathname + url.search);
+    return;
+  }
+  next();
+}
+
 function appendModelAdminRouter(yiAdmin: YiAdmin, router: express.Router): void {
   // eslint-disable-next-line new-cap
   const modelRouter = express.Router({
     mergeParams: true,
   });
 
-  modelRouter.get('/', async (req, res: Response) => {
-    if (!req.originalUrl.endsWith('/')) { // 使强制加/
-      res.redirect(req.originalUrl + '/');
-      return;
-    }
+  modelRouter.get('/', checkRedirectMiddleware, async (req, res: Response) => {
     if (res.yiAdminSSRRender) {
       await res.yiAdminSSRRender('/model-admin-list', getBaseRenderSSRParams(yiAdmin, req, res));
     }
   });
 
-  modelRouter.get('/edit/', async (req, res: Response) => {
-    if (!req.originalUrl.endsWith('/')) { // 使强制加/
-      res.redirect(req.originalUrl + '/');
-      return;
-    }
+  modelRouter.get('/edit/', checkRedirectMiddleware, async (req, res: Response) => {
     if (res.yiAdminSSRRender) {
       await res.yiAdminSSRRender('/model-admin-edit', getBaseRenderSSRParams(yiAdmin, req, res));
     }
@@ -432,11 +434,7 @@ export async function createExpressRouter({
     yiAdmin.permissionExpress(req, res, next);
   });
 
-  router.get('/', async (req: express.Request, res: Response) => {
-    if (!req.originalUrl.endsWith('/')) { // 使强制加/
-      res.redirect(req.originalUrl + '/');
-      return;
-    }
+  router.get('/', checkRedirectMiddleware, async (req: express.Request, res: Response) => {
     if (res.yiAdminSSRRender) {
       await res.yiAdminSSRRender('/', getBaseRenderSSRParams(yiAdmin, req, res, ''));
     }

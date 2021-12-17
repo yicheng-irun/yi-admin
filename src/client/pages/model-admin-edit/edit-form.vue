@@ -4,14 +4,16 @@
     class="edit-form"
   >
     <div>
-      <n-form-item
-        v-if="editId"
-        label="id:"
-      >
-        <div class="edit-id">
-          {{ editId }}
-        </div>
-      </n-form-item>
+      <no-ssr>
+        <n-form-item
+          v-if="editId"
+          label="ID:"
+        >
+          <div class="edit-id">
+            {{ editId }}
+          </div>
+        </n-form-item>
+      </no-ssr>
       <n-form-item
         v-for="(item, index) in editFormFields"
         :key="index"
@@ -58,98 +60,79 @@
     {{JSON.stringify(editFormData)}}
   </pre>
   <pre>
-    {{ JSON.stringify(editFormFields)}}
+    {{ JSON.stringify(editFormFields, null, '  ')}}
   </pre>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import { computed, getCurrentInstance } from 'vue';
+import { useStore } from 'vuex';
 import { FormComponents } from './form-components';
-import { EditFieldItem } from './store';
+import { ModelAdminEditPageState } from './store';
 
-export default defineComponent({
-  components: {
-  },
+const { state, commit, dispatch } = useStore<ModelAdminEditPageState>();
 
-  props: {
-    editId: {
-      type: String,
-      default: '',
-    },
-    editFormData: {
-      type: Object as PropType<Record<string, unknown>>,
-      default() {
-        return {};
-      },
-    },
-    editFormFields: {
-      type: Array as PropType<EditFieldItem[]>,
-      default() {
-        return [];
-      },
-    },
-  },
+const editId = computed(() => state.editId);
 
-  computed: {
-    state() {
-      return this.$store.state;
-    },
-  },
+const editFormData = computed(() => state.editFormData);
+const editFormFields = computed(() => state.editFormFields);
 
-  methods: {
-    getComponent(componentName: string) {
-      if (Object.prototype.hasOwnProperty.call(FormComponents, componentName)) {
-        return FormComponents[componentName];
-      }
-      return FormComponents.base;
-    },
-    async submit() {
-      if (this.state.loading) return;
-      this.$store.commit('setLoading', true);
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-      try {
-        const data = await this.$store.dispatch('formSubmit');
-        if (data?.success) {
-          this.$notification.success({
-            title: '保存成功',
-            description: '保存成功',
-            duration: 5000,
-          });
-        } else {
-          throw new Error(data?.message || '保存失败');
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          this.$notification.error({
-            title: '提交出错了',
-            description: e?.message || `${e}`,
-            duration: 5000,
-          });
-        }
-      }
+function getComponent(componentName: string) {
+  if (Object.prototype.hasOwnProperty.call(FormComponents, componentName)) {
+    return FormComponents[componentName];
+  }
+  return FormComponents.base;
+}
 
-      this.$store.commit('setLoading', false);
-    },
-    reset() {
-      try {
-        this.$store.commit('resetEditFormData');
-        this.$notification.success({
-          title: '重置好了',
-          description: '重置好了',
-          duration: 5000,
-        });
-      } catch (e) {
-        if (e instanceof Error) {
-          this.$notification.error({
-            title: '重置出错了',
-            description: e?.message || `${e}`,
-            duration: 5000,
-          });
-        }
-      }
-    },
-  },
-});
+const ctx = getCurrentInstance();
+const $notification = ctx?.appContext.config.globalProperties.$notification;
+
+async function submit() {
+  if (state.loading) return;
+  commit('setLoading', true);
+  // await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    const data = await dispatch('formSubmit');
+    if (data?.success) {
+      $notification.success({
+        title: '保存成功',
+        description: '保存成功',
+        duration: 5000,
+      });
+    } else {
+      throw new Error(data?.message || '保存失败');
+    }
+  } catch (e) {
+    if (e instanceof Error) {
+      $notification.error({
+        title: '提交出错了',
+        description: e?.message || `${e}`,
+        duration: 5000,
+      });
+    }
+  }
+
+  commit('setLoading', false);
+}
+
+function reset() {
+  try {
+    commit('resetEditFormData');
+    $notification.success({
+      title: '重置好了',
+      description: '重置好了',
+      duration: 5000,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      $notification.error({
+        title: '重置出错了',
+        description: e?.message || `${e}`,
+        duration: 5000,
+      });
+    }
+  }
+}
 </script>
 
 <style lang="scss">

@@ -9,40 +9,32 @@ const ArrayTestSchema = new Schema<{
 }>({
   arrayField: {
     type: [String],
-    outerOptions: {
-      name: '鹅鹅鹅',
-      editType: new EditTypes.EditArrayType({
-        childrenType: new EditTypes.EditStringType({
-          helpText: '呃呃呃',
-        }),
+    name: '鹅鹅鹅',
+    editType: new EditTypes.EditArrayType({
+      childrenType: new EditTypes.EditStringType({
+        helpText: '呃呃呃',
       }),
-    },
+    }),
   },
   arrayField2: {
     type: [Number],
-    outerOptions: {
-      editType: new EditTypes.EditArrayType({
-        childrenType: new EditTypes.EditNumberType({}),
-      }),
-    },
+    editType: new EditTypes.EditArrayType({
+      childrenType: new EditTypes.EditNumberType({}),
+    }),
   },
   arrayField3: {
     type: [Boolean],
-    outerOptions: {
-      editType: new EditTypes.EditArrayType({
-        childrenType: new EditTypes.EditBooleanType({}),
-      }),
-    },
+    editType: new EditTypes.EditArrayType({
+      childrenType: new EditTypes.EditBooleanType({}),
+    }),
   },
 
   arrayField4: {
     type: [Boolean],
-    outerOptions: {
-      editType: new EditTypes.EditArrayType({
-        childrenType: new EditTypes.EditBooleanType({}),
-      }),
-      name: '布尔数组',
-    },
+    editType: new EditTypes.EditArrayType({
+      childrenType: new EditTypes.EditBooleanType({}),
+    }),
+    name: '布尔数组',
   },
 
 }, { timestamps: true });

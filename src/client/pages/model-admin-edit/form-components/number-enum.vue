@@ -1,6 +1,6 @@
 <template>
   <n-select
-    v-model="editFormData[objectKey]"
+    v-model:value="editFormData[objectKey]"
     :placeholder="config?.placeholder == null ? '请选择' : config?.placeholder"
     :clearable="true"
     :options="options"

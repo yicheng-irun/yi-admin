@@ -9,7 +9,7 @@
       :class="config.listStyleInline ? 'inline-type' : ''"
     >
       <component
-        :is="getComponent"
+        :is="getComponent()"
         :id="id"
         :config="componentConfig"
         :field-name="fieldName"
@@ -21,68 +21,58 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import { computed, PropType } from 'vue';
+import ListComponents from '../list-components';
 
-export default defineComponent({
-  model: {
-    prop: 'value',
-    event: 'input',
+const props = defineProps({
+  value: {
+    type: Array as PropType<(string|number| boolean| Date| Object)[]>,
+    default: () => [],
   },
-  props: {
-    value: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    id: {
-      type: String,
-      default: '',
-    },
-    fieldName: {
-      type: String,
-      default: '',
-    },
-    config: {
-      type: Object as PropType<{
-         listStyleInline?: boolean;
-         childrenType: {
-            componentName: string;
-            fieldName: string;
-            componentConfig: Record<string, string>
-            fieldNameAlias: string;
-         }
-      }>,
-      default() {
-        return {
-          listStyleInline: false,
-          childrenType: {
-            componentName: 'base',
-            fieldName: '',
-            componentConfig: {},
-            fieldNameAlias: '',
-          },
-        };
-      },
-    },
+  id: {
+    type: String,
+    default: '',
   },
-  computed: {
-    componentConfig(): {} {
-      return this.config?.childrenType?.componentConfig || {};
-    },
+  fieldName: {
+    type: String,
+    default: '',
   },
-  methods: {
-    async getComponent() {
-      const componentName = this.config?.childrenType?.componentName;
-      const { default: FormComponents } = await import('../list-components');
-      if (componentName && Object.prototype.hasOwnProperty.call(FormComponents, componentName)) {
-        return FormComponents[componentName]();
+  config: {
+    type: Object as PropType<{
+      listStyleInline?: boolean;
+      childrenType: {
+        componentName: string;
+        fieldName: string;
+        componentConfig: Record<string, string>
+        fieldNameAlias: string;
       }
-      return FormComponents.base();
+    }>,
+    default() {
+      return {
+        listStyleInline: false,
+        childrenType: {
+          componentName: 'base',
+          fieldName: '',
+          componentConfig: {},
+          fieldNameAlias: '',
+        },
+      };
     },
   },
 });
+
+const componentConfig = computed(() => {
+  return props.config?.childrenType?.componentConfig || {};
+});
+
+function getComponent() {
+  const componentName = props.config?.childrenType?.componentName;
+  if (componentName && Object.prototype.hasOwnProperty.call(ListComponents, componentName)) {
+    return ListComponents[componentName];
+  }
+  return ListComponents.base;
+}
 </script>
 
 <style lang="scss">
@@ -92,8 +82,8 @@ export default defineComponent({
       position: relative;
       margin: 0.3em;
       &.inline-type {
-         display: inline-block;
-         background: #0001;
+        display: inline-block;
+        background: #0001;
       }
    }
 }

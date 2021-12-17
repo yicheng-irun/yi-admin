@@ -16,5 +16,6 @@
     "allowJs": true,
     "incremental": true
   },
+  "include": ["../server"],
   "exclude": ["node_modules", "build"]
 }

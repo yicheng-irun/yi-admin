@@ -20,12 +20,7 @@
         {{ state.modelInfo.title || state.modelInfo.name }} {{ state.editId ? '编辑' : '新增' }}
       </n-breadcrumb-item>
     </n-breadcrumb>
-
-    <edit-form
-      :edit-id="state.editId"
-      :edit-form-fields="state.editFormFields"
-      :edit-form-data="state.editFormData"
-    />
+    <edit-form />
   </div>
 </template>
 

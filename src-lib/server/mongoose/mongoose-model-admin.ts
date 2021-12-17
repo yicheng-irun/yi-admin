@@ -104,14 +104,7 @@ const INSTANCE_EDIT_TYPE_MAP: {
 
     const pathsKeys = Object.keys(schema.paths);
     pathsKeys.forEach((key) => {
-      // 这个mongoose的这里的类型声明不正确
-      // @ts-ignore
-      const schemaPath: SchemaType & {
-            instance: string;
-            path: string;
-            options: SchemaTypeOptions<{}>;
-            schema?: Schema;
-         } = schema.paths[key];
+      const schemaPath = schema.paths[key];
 
       if (key === '_id' || key === '__v') return;
       const { instance } = schemaPath;
@@ -125,6 +118,7 @@ const INSTANCE_EDIT_TYPE_MAP: {
       }
 
       if (typeInstance) {
+        // @ts-ignore
         typeInstance.fieldName = schemaPath.path;
         if (!typeInstance.fieldNameAlias) {
           typeInstance.fieldNameAlias = schemaPath.options.name || '';

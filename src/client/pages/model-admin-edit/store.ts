@@ -24,8 +24,9 @@ export interface ModelAdminEditPageState {
 
 
 export function createPageStore(ctx: {
-   router: Router
+  router: Router
 }) {
+  const editId = String(ctx.router.currentRoute.value.query.id || '');
   return createStore<ModelAdminEditPageState>({
     state: {
       modelInfo: {
@@ -33,7 +34,7 @@ export function createPageStore(ctx: {
         title: '',
       },
 
-      editId: String(ctx.router.currentRoute.value.query.id || ''),
+      editId,
       editFormFields: [],
       editFormData: {},
       editFormDataResetJson: '{}',

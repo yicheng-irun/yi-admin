@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="value"
     class="form-components-array"
   >
     <div
@@ -9,31 +10,32 @@
     >
       <div class="delete-btn">
         <n-button
-          type="danger"
-          icon="close"
+          type="error"
           size="small"
           circle
           @click="value.splice(index, 1)"
-        />
+        >
+          <Icon icon="close" ></Icon>
+        </n-button>
       </div>
       <component
-        :is="getComponent"
-        v-model="value[index]"
+        :is="getComponent()"
         :edit-form-data="value"
         :object-key="index"
-        :name="index"
+        :name="`${index}`"
         :config="componentConfig"
         :field-name="fieldName"
       />
     </div>
     <n-button
       v-if="value.length < maxLength"
-      icon="plus"
       type="primary"
       size="small"
       circle
       @click="pushItem"
-    />
+    >
+      <Icon icon="plus" ></Icon>
+    </n-button>
     <p
       v-if="componentConfig.helpText"
       class="ya-help-text"
@@ -42,68 +44,76 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, onMounted, PropType } from 'vue';
+import { FormComponents } from '../form-components';
+import Icon from '../../../components/Icon.vue';
 
-export default defineComponent({
-  props: {
-    value: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    config: {
-      type: Object,
-      default() {
-        return {
-          required: false,
-          helpText: '',
-          minLength: 0,
-          maxLength: 100,
-          childrenType: {
-            componentName: 'base',
-            fieldName: '',
-            componentConfig: {
-              required: false,
-              helpText: '',
-            },
-            fieldNameAlias: '',
-          },
+
+const props = defineProps({
+  config: {
+    type: Object as PropType<{
+      required?: boolean;
+      helpText?: string;
+      minLength?: number;
+      maxLength?: number;
+      childrenType: {
+        componentName: string;
+        fieldName: string;
+        componentConfig: {
+          required?: boolean;
+          helpText?: string;
         };
-      },
-    },
-    fieldName: {
-      type: String,
-      default: '',
+        fieldNameAlias?: string;
+      }
+    }>,
+  },
+  editFormData: {
+    type: Object as PropType<Record<string, any[]>>,
+    default() {
+      return {};
     },
   },
-  computed: {
-    componentConfig() {
-      return this.config?.childrenType?.componentConfig || {};
-    },
-    maxLength() {
-      return this.config?.maxLength || Infinity;
-    },
-  },
-  methods: {
-    async getComponent() {
-      const componentName = this.config?.childrenType?.componentName;
-      const { FormComponents } = await import('../form-components');
-      if (Object.prototype.hasOwnProperty.call(FormComponents, componentName)) {
-        return FormComponents[componentName]();
-      }
-      return FormComponents.base();
-    },
-    pushItem() {
-      if (this.config?.childrenType?.componentName === 'object') {
-        this.value.push({});
-        return;
-      }
-      this.value.push(null);
-    },
+  name: String,
+  fieldName: String,
+  objectKey: {
+    type: [String, Number] as PropType<string|number>,
+    default: '',
   },
 });
+
+const componentConfig = computed(() => {
+  return props.config?.childrenType?.componentConfig || {};
+});
+
+const maxLength = computed(() => props.config?.maxLength || Infinity);
+
+const value = computed((): any[] => {
+  return props.editFormData[props.objectKey];
+});
+
+function getComponent() {
+  const componentName = props.config?.childrenType?.componentName;
+  if (componentName && Object.prototype.hasOwnProperty.call(FormComponents, componentName)) {
+    return FormComponents[componentName];
+  }
+  return FormComponents.base;
+}
+
+function pushItem() {
+  if (props.config?.childrenType?.componentName === 'object') {
+    value.value.push({});
+    return;
+  }
+  value.value.push(null);
+}
+
+onMounted(() => {
+  if (!value.value) {
+    props.editFormData[props.objectKey] = [];
+  }
+});
+
 </script>
 
 <style lang="scss">
