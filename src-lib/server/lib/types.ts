@@ -14,7 +14,7 @@ import { EditStringJoditEditorType } from './edit-types/edit-string-jodit-type';
 import { EditStringRemoteSelectType } from './edit-types/edit-string-remote-select-type';
 import { EditStringTextareaType } from './edit-types/edit-string-textarea-type';
 import { EditStringType } from './edit-types/edit-string-type';
-import { EditStringUEditorType } from './edit-types/edit-string-ueditor-type';
+import { EditStringWangEditorType } from './edit-types/edit-string-wangeditor-type';
 
 import { ListArrayType } from './list-types/list-array-type';
 import { ListBaseType } from './list-types/list-base-type';
@@ -43,7 +43,7 @@ export const EditTypes = {
   EditStringRemoteSelectType,
   EditStringTextareaType,
   EditStringType,
-  EditStringUEditorType,
+  EditStringWangEditorType,
 };
 
 

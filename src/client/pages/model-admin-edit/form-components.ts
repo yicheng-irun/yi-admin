@@ -17,7 +17,7 @@ export const FormComponents: Record<string, DefineComponent<{}, {}, any>> = {
   'string-remote-select': defineAsyncComponent(() => import('./form-components/string-remote-select.vue')),
   'string': defineAsyncComponent(() => import('./form-components/string.vue')),
   'string-textarea': defineAsyncComponent(() => import('./form-components/string-textarea.vue')),
-  'string-ueditor': defineAsyncComponent(() => import('./form-components/string-ueditor.vue')),
+  'string-wang-editor': defineAsyncComponent(() => import('./form-components/string-wang-editor.vue')),
 };
 
 export default FormComponents;

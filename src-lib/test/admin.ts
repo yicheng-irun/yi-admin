@@ -10,7 +10,7 @@ import NumberEnumTestModel from './models/number-enum-test.model';
 import StringFileTestModel from './models/string-file.model';
 import StringImageTestModel from './models/string-image.model';
 import StringJoditEditorModel from './models/string-jodit-editor.model';
-import StringUEditorModel from './models/string-ueditor.model';
+import StringWangEditorModel from './models/string-wang.model';
 import ArrayTestModel from './models/array-test.model';
 import ArrayImageModel from './models/array-image.model';
 import ArrayStringEnumModel from './models/array-string-enum.model';
@@ -136,8 +136,8 @@ myadmin.addModelAdmin(new MongooseModelAdmin({
 }));
 
 myadmin.addModelAdmin(new MongooseModelAdmin({
-  name: 'string-ueditor',
-  model: StringUEditorModel,
+  name: 'string-wangeditor',
+  model: StringWangEditorModel,
 }));
 
 myadmin.addModelAdmin(new MongooseModelAdmin({

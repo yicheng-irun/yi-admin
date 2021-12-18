@@ -82,7 +82,6 @@ export class EditStringJoditEditorType extends EditStringTextareaType {
      url: string;
   }>;
 
-  // eslint-disable-next-line class-methods-use-this
   public async action(actionName: string, actionData: any, reqData: ReqData): Promise<JsonReturnType<{
       files: string[];
       path: string;
