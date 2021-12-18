@@ -38,10 +38,15 @@ import formatFileSize from '../components-utils/format-file-size';
 import Icon from '../../../components/Icon.vue';
 
 const props = defineProps({
-  config: Object as PropType<{
+  config: { type: Object as PropType<{
     maxFileSize?: number;
     mimeType?: string;
-  }>,
+  }>, default() {
+    return {
+      maxFileSize: 10 * 1000,
+      mimeType: '*',
+    };
+  } },
   editFormData: {
     type: Object as PropType<Record<string, unknown>>,
     default() {
@@ -118,7 +123,7 @@ function selectFile() {
     }
   });
   fileInput.style.opacity = '0';
-  fileInput.style.position = 'absolut';
+  fileInput.style.position = 'absolute';
   document.body.append(fileInput);
   fileInput.click();
   fileInput.remove();
