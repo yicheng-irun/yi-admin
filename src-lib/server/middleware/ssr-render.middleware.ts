@@ -21,7 +21,7 @@ export async function createExpressSsrMiddleware(param: {
   readFileSync(resolve(__dirname, '../../../index.html'), 'utf-8').toString() :
   readFileSync(resolve(__dirname, '../../../dist/client/index.html'), 'utf-8').toString().replace('<!--dynamic-import-config-->', `<script>window.__vite_public_path__ = "${baseURL.replace(/^\//, '')}"</script>`);
 
-  const manifest = param.vite ? {} : (await import('../../../dist/client/ssr-manifest.json'));
+  const manifest = param.vite ? {} : (JSON.parse(readFileSync(resolve(__dirname, '../../../dist/client/ssr-manifest.json'), 'utf-8').toString()));
 
   const ssrRender: Handler = function(req: express.Request, res: Response, next) {
     res.yiAdminSSRRender = async (page: string, ssrParams?: any) => {
@@ -29,7 +29,7 @@ export async function createExpressSsrMiddleware(param: {
         const url = req.originalUrl;
         const templateT = param.vite ? await param.vite.transformIndexHtml(url, template) : template;
         const render = param.vite ? (await param.vite.ssrLoadModule(resolve(__dirname, '../../../src/client/entry-server.ts'))).render :
-          (await import('../../../dist/server/entry-server')).render;
+          require('../../../dist/server/entry-server').render;
 
         const [serverRenderHtml, preloadLinks, initState] = (await render(
             page, {

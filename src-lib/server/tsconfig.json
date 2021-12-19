@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "baseUrl": "./",
+    "rootDir": "./",
     "outDir": "../../lib/server",
     "declaration": true,
     "removeComments": true,
@@ -16,5 +16,5 @@
     "allowJs": true,
     "incremental": true
   },
-  "exclude": ["node_modules", "build"]
+  "exclude": ["node_modules", "build", "dist"]
 }
