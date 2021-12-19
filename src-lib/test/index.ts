@@ -11,6 +11,8 @@ import koaConnect from 'koa-connect';
 
 config();
 
+process.env.YI_ADMIN_DEV_MODE = 'false';
+
 const MONGODB_URI = getEnv('MONGODB_URI', 'mongodb://localhost:27017/');
 
 export default async function createApp(): Promise<Koa> {
@@ -40,7 +42,7 @@ export async function createApp2(): Promise<express.Application> {
 
   app.use('/test', await myadmin.createExpressRouter('/test'));
 
-  // app.use(myadmin2.expressRouter);
+  app.use('/test2', await myadmin2.createExpressRouter('/test2'));
 
   return app;
 }

@@ -8,7 +8,7 @@ import { EditBaseType } from './edit-types/edit-base-type';
 import { ListBaseType } from './list-types/list-base-type';
 import { FilterBaseType } from './filter-types/filter-base-type';
 import { ModelAdminListAction } from '..';
-import { createServer } from 'vite';
+import type { ViteDevServer } from 'vite';
 import { createExpressSsrMiddleware, expressRenderFunction } from '../middleware/ssr-render.middleware';
 
 type Response = express.Response & {
@@ -384,19 +384,34 @@ export async function createExpressRouter({
   // eslint-disable-next-line new-cap
   const router = express.Router();
 
-  const vite = await createServer({
-    root: resolve(__dirname, '../../../'),
-    base: basePath,
-    server: {
-      middlewareMode: 'ssr',
-      watch: {
-        usePolling: false,
-        interval: 100,
-      },
-    },
-  });
+  const isDevMode = process.env.YI_ADMIN_DEV_MODE === 'true';
+  let vite: ViteDevServer;
 
-  router.use(vite.middlewares);
+  if (isDevMode) {
+    const { createServer } = await import('vite');
+    vite = await createServer({
+      root: resolve(__dirname, '../../../'),
+      base: basePath,
+      server: {
+        middlewareMode: 'ssr',
+        watch: {
+          usePolling: false,
+          interval: 100,
+        },
+      },
+    });
+
+    router.use(vite.middlewares);
+  } else {
+    const assetsPath = resolve(__dirname, '../../../dist/client/assets');
+    router.use('/assets', express.static(assetsPath));
+  }
+
+  router.use(await createExpressSsrMiddleware({
+    vite,
+    baseURL: basePath,
+  }));
+
 
   const clientStaticPath = resolve(__dirname, '../../../static');
   router.use('/__yi-admin-assets__/static', express.static(clientStaticPath));
@@ -423,12 +438,6 @@ export async function createExpressRouter({
     }
     next();
   });
-
-
-  router.use(createExpressSsrMiddleware({
-    vite,
-    baseURL: basePath,
-  }));
 
   router.use((req, res, next) => {
     yiAdmin.permissionExpress(req, res, next);

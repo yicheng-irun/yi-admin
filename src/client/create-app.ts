@@ -9,7 +9,7 @@ import {
 import { Store } from 'vuex';
 import RootApp from './App.vue';
 import NoSsr from './components/no-ssr.vue';
-// import { useAntDesign } from './plugins/ant-design-vue';
+import './components/base-layout.scss';
 import { useNaiveUi } from './plugins/naive-ui';
 
 // @ts-ignore

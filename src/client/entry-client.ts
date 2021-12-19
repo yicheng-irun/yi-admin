@@ -1,6 +1,12 @@
+// @ts-ignore
+const dynamicBasePath = window.__vite_public_path__ || '';
+// @ts-ignore
+window.__dynamicImportPreload__ = function(preloads: string[]) {
+  return preloads.map((preload) => dynamicBasePath + preload);
+};
+
 import { createApp } from './create-app';
 import { axiosClientPlugin } from './plugins/axiox.client';
-import './components/base-layout.scss';
 
 
 const initState: {

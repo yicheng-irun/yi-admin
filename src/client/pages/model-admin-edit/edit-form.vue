@@ -56,12 +56,12 @@
       </n-form-item>
     </div>
   </n-spin>
-  <pre>
+  <!-- <pre>
     {{JSON.stringify(editFormData)}}
   </pre>
   <pre>
     {{ JSON.stringify(editFormFields, null, '  ')}}
-  </pre>
+  </pre> -->
 </template>
 
 <script setup lang="ts">

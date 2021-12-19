@@ -44,7 +44,9 @@ export async function render(page: string, context: {
 }
 
 function renderPreloadLinks(
-    modules: Set<string>, manifest: Record<string, string[]>) {
+    modules: Set<string>,
+    manifest: Record<string, string[]>,
+) {
   let links = '';
   const seen = new Set<string>();
   modules.forEach((id) => {
