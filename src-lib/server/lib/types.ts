@@ -19,6 +19,7 @@ import { EditStringWangEditorType } from './edit-types/edit-string-wangeditor-ty
 import { ListArrayType } from './list-types/list-array-type';
 import { ListBaseType } from './list-types/list-base-type';
 import { ListBooleanType } from './list-types/list-boolean-type';
+import { ListDateTimeType } from './list-types/list-date-time-type';
 import { ListNumberEnumType } from './list-types/list-number-enum-type';
 import { ListNumberRemoteSelectType } from './list-types/list-number-remote-select-type';
 import { ListStringEnumType } from './list-types/list-string-enum-type';
@@ -51,6 +52,7 @@ export const ListTypes = {
   ListArrayType,
   ListBaseType,
   ListBooleanType,
+  ListDateTimeType,
   ListNumberEnumType,
   ListNumberRemoteSelectType,
   ListStringEnumType,

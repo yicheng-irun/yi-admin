@@ -59,7 +59,9 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.$store.dispatch('loadData');
+    this.$store.dispatch('loadData').then(() => {
+      window.document.title = this.siteConfig?.siteName || 'yi-admin';
+    });
   },
   computed: {
     state(): IndexPageState {

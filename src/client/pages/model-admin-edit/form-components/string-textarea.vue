@@ -4,6 +4,10 @@
     type="textarea"
     :placeholder="config?.placeholder || ''"
     :max-length="config?.maxLength"
+    :autosize="{
+      minRows: 3
+    }"
+    class="form-components-textarea"
   />
 </template>
 
@@ -31,8 +35,9 @@ defineProps({
 
 </script>
 
-<style lang="scss">
-.form-component-string-textarea.ant-input {
-   max-width: 40em;
+<style lang="scss" scoped>
+.form-components-textarea {
+  max-width: 50em;
+  min-width: 36em;
 }
 </style>

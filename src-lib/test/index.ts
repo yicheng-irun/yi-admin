@@ -11,7 +11,7 @@ import koaConnect from 'koa-connect';
 
 config();
 
-process.env.YI_ADMIN_DEV_MODE = 'false';
+process.env.YI_ADMIN_DEV_MODE = 'true';
 
 const MONGODB_URI = getEnv('MONGODB_URI', 'mongodb://localhost:27017/');
 

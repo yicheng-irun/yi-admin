@@ -17,6 +17,9 @@ import ArrayStringEnumModel from './models/array-string-enum.model';
 import ObjModel from './models/obj-type.model';
 
 const myadmin = new YiAdmin({
+  siteConfig: {
+    siteName: '测试站点名',
+  },
   csrfParam(req, res): {} {
     return {
       query: {

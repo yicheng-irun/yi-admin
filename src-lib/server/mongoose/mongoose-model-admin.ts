@@ -22,6 +22,7 @@ import { FilterTypes } from './mongoose-filter-types';
 import { FilterBaseType } from '../lib/filter-types/filter-base-type';
 import { getSchemaBoolean, getSchemaEnumNumber, getSchemaEnumString, getSchemaNumber, tileResult } from './mongoose-util';
 import { EditObjectType } from '../lib/edit-types/edit-object-type';
+import { ListDateTimeType } from '../lib/list-types/list-date-time-type';
 
 /**
  * 映射mongoose的默认类型的图
@@ -104,7 +105,9 @@ const INSTANCE_EDIT_TYPE_MAP: {
 
     const pathsKeys = Object.keys(schema.paths);
     pathsKeys.forEach((key) => {
-      const schemaPath = schema.paths[key];
+      const schemaPath = schema.paths[key] as SchemaType & {
+        path?: string;
+      };
 
       if (key === '_id' || key === '__v') return;
       const { instance } = schemaPath;
@@ -118,7 +121,6 @@ const INSTANCE_EDIT_TYPE_MAP: {
       }
 
       if (typeInstance) {
-        // @ts-ignore
         typeInstance.fieldName = schemaPath.path;
         if (!typeInstance.fieldNameAlias) {
           typeInstance.fieldNameAlias = schemaPath.options.name || '';
@@ -157,7 +159,9 @@ const INSTANCE_LIST_TYPE_MAP: {
     return this.Base(SchemaTypeOptions);
   },
   Date(SchemaTypeOptions: SchemaTypeOptions<{}>): ListBaseType {
-    return this.Base(SchemaTypeOptions);
+    return new ListDateTimeType({
+      fieldNameAlias: SchemaTypeOptions.name,
+    });
   },
   Boolean(SchemaTypeOptions: SchemaTypeOptions<{}>): ListBaseType {
     return new ListBooleanType({
@@ -280,13 +284,9 @@ export class MongooseModelAdmin extends ModelAdminBase {
     const { schema } = this.model;
     const pathsKeys = Object.keys(schema.paths);
     pathsKeys.forEach((key) => {
-      // 卧槽，这个mongoose的这里的类型声明不正确
-      // @ts-ignore
-      const schemaPath: SchemaType & {
-               instance: string;
-               path: string;
-               options: SchemaTypeOptions<{}>;
-            } = schema.paths[key];
+      const schemaPath = schema.paths[key] as SchemaType & {
+        path?: string;
+      };
 
       if (key === '_id' || key === '__v') return;
       const { instance, path } = schemaPath;

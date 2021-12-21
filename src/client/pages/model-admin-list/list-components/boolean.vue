@@ -3,38 +3,33 @@
     v-if="typeof value === 'boolean'"
     class="list-components-boolean"
   >
-    <!-- <n-icon
-      :type="value ? 'check-circle' : 'close-circle'"
-      :class="value ? 'success' : 'error'"
-    /> -->
-    {{ value ? '是' : '否' }}
+    <span :class="value ? 'success' : 'error'">
+      <Icon v-if="value" icon="ok"></Icon>
+      <Icon v-else icon="close"></Icon>
+      {{ value ? '是' : '否' }}
+    </span>
   </div>
   <div v-else>
     {{ value }}
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import Icon from '../../../components/Icon.vue';
 
-export default defineComponent({
-  model: {
-    prop: 'value',
-    event: 'input',
+defineProps({
+  value: {
+    type: Boolean,
+    default: null,
   },
-  props: {
-    value: {
-      type: Boolean,
-      default: null,
-    },
-    config: {
-      type: Object,
-      default() {
-        return {};
-      },
+  config: {
+    type: Object,
+    default() {
+      return {};
     },
   },
 });
+
 </script>
 
 <style lang="scss">

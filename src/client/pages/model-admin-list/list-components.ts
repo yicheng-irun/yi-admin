@@ -5,6 +5,7 @@ const ListComponents: Record<string, DefineComponent<{}, {}, any>> = {
   'array': defineAsyncComponent(() => import('./list-components/array.vue')),
   'base': defineAsyncComponent(() => import('./list-components/base.vue')),
   'boolean': defineAsyncComponent(() => import('./list-components/boolean.vue')),
+  'date-time': defineAsyncComponent(() => import('./list-components/date-time.vue')),
   'object': defineAsyncComponent(() => import('./list-components/object.vue')),
   'string-enum': defineAsyncComponent(() => import('./list-components/string-enum.vue')),
   'string-html': defineAsyncComponent(() => import('./list-components/string-html.vue')),
