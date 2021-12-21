@@ -27,7 +27,7 @@
           <left-block v-if="siteMenu" :collapsed="collapsed" />
         </n-layout-sider>
 
-        <n-layout-content>
+        <n-layout-content class="iframe-wrapper">
           <iframe
             class="main-iframe"
             ref="iframe"
@@ -149,6 +149,11 @@ html, body {
       width: 100%;
       height: 100%;
       border: none;
+    }
+    .iframe-wrapper {
+      >.n-layout-scroll-container {
+        overflow-x: visible;
+      }
     }
   }
 }
