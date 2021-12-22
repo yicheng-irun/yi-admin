@@ -35,7 +35,7 @@ export class FilterSelectType extends FilterBaseType implements FilterSelectInte
   public getConditions(fieldParam: (string | number | boolean) | (string | number | boolean)[]): {
       [key: string]: any;
       } {
-    if (fieldParam) {
+    if (fieldParam !== null && fieldParam !== undefined) {
       if (Array.isArray(fieldParam)) {
         if (fieldParam.length > 0) {
           return {
