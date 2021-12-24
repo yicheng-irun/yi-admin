@@ -15,6 +15,7 @@ import ArrayTestModel from './models/array-test.model';
 import ArrayImageModel from './models/array-image.model';
 import ArrayStringEnumModel from './models/array-string-enum.model';
 import ObjModel from './models/obj-type.model';
+import NumberTestModel from './models/number-test.model';
 
 const myadmin = new YiAdmin({
   siteConfig: {
@@ -111,6 +112,11 @@ myadmin.addModelAdmin(new MongooseModelAdmin({
 myadmin.addModelAdmin(new MongooseModelAdmin({
   name: 'number-enum-test',
   model: NumberEnumTestModel,
+}));
+
+myadmin.addModelAdmin(new MongooseModelAdmin({
+  name: 'number-test',
+  model: NumberTestModel,
 }));
 
 myadmin.addModelAdmin(new MongooseModelAdmin({
