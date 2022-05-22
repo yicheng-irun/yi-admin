@@ -13,7 +13,6 @@ export const FormComponents: Record<string, DefineComponent<{}, {}, any>> = {
   'string-enum': defineAsyncComponent(() => import('./form-components/string-enum.vue')),
   'string-file': defineAsyncComponent(() => import('./form-components/string-file.vue')),
   'string-image': defineAsyncComponent(() => import('./form-components/string-image.vue')),
-  'string-jodit-editor': defineAsyncComponent(() => import('./form-components/string-jodit-editor.vue')),
   'string-remote-select': defineAsyncComponent(() => import('./form-components/string-remote-select.vue')),
   'string': defineAsyncComponent(() => import('./form-components/string.vue')),
   'string-textarea': defineAsyncComponent(() => import('./form-components/string-textarea.vue')),

@@ -9,7 +9,6 @@ import StringEnumTestModel from './models/string-enum-test.model';
 import NumberEnumTestModel from './models/number-enum-test.model';
 import StringFileTestModel from './models/string-file.model';
 import StringImageTestModel from './models/string-image.model';
-import StringJoditEditorModel from './models/string-jodit-editor.model';
 import StringWangEditorModel from './models/string-wang.model';
 import ArrayTestModel from './models/array-test.model';
 import ArrayImageModel from './models/array-image.model';
@@ -132,11 +131,6 @@ myadmin.addModelAdmin(new MongooseModelAdmin({
 myadmin.addModelAdmin(new MongooseModelAdmin({
   name: 'string-image',
   model: StringImageTestModel,
-}));
-
-myadmin.addModelAdmin(new MongooseModelAdmin({
-  name: 'string-jodit-editor',
-  model: StringJoditEditorModel,
 }));
 
 myadmin.addModelAdmin(new MongooseModelAdmin({
