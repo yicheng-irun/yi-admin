@@ -13,47 +13,48 @@
             {{ editId }}
           </div>
         </n-form-item>
-      </no-ssr>
-      <n-form-item
-        v-for="(item, index) in editFormFields"
-        :key="index"
-        :label="`${item.fieldNameAlias || item.fieldName}:`"
-        :name="item.fieldName"
-        :required="item.componentConfig.required"
-        :rule="{}"
-      >
-        <div class="form-item-wrap">
-          <component
-            :is="getComponent(item.componentName)"
-            :edit-form-data="editFormData"
-            :object-key="item.fieldName"
-            :name="item.fieldName"
-            :config="item.componentConfig"
-            :field-name="item.fieldName"
+
+        <n-form-item
+          v-for="(item, index) in editFormFields"
+          :key="index"
+          :label="`${item.fieldNameAlias || item.fieldName}:`"
+          :name="item.fieldName"
+          :required="item.componentConfig.required"
+          :rule="{}"
+        >
+          <div class="form-item-wrap">
+            <component
+              :is="getComponent(item.componentName)"
+              :edit-form-data="editFormData"
+              :object-key="item.fieldName"
+              :name="item.fieldName"
+              :config="item.componentConfig"
+              :field-name="item.fieldName"
+            />
+          </div>
+          <p
+            v-if="item.componentConfig.helpText"
+            class="ya-help-text"
+            v-text="item.componentConfig.helpText"
           />
-        </div>
-        <p
-          v-if="item.componentConfig.helpText"
-          class="ya-help-text"
-          v-text="item.componentConfig.helpText"
-        />
-      </n-form-item>
-      <n-form-item>
-        <n-space>
-          <n-button
-            type="primary"
-            @click="submit"
-          >
-            {{ editId ? '保存' : '提交' }}
-          </n-button>
-          <n-button
-            dashed
-            @click="reset"
-          >
-            重置
-          </n-button>
-        </n-space>
-      </n-form-item>
+        </n-form-item>
+        <n-form-item>
+          <n-space>
+            <n-button
+              type="primary"
+              @click="submit"
+            >
+              {{ editId ? '保存' : '提交' }}
+            </n-button>
+            <n-button
+              dashed
+              @click="reset"
+            >
+              重置
+            </n-button>
+          </n-space>
+        </n-form-item>
+      </no-ssr>
     </div>
   </n-spin>
   <!-- <pre>

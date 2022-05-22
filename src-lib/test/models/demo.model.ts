@@ -1,6 +1,6 @@
 import { model, Schema, Types } from 'mongoose';
 import { EditTypes, MongooseModelAdmin } from '../../server';
-import { RefFieldClassModel, RefFieldClassSchema } from './demo.refclass.model';
+// import { RefFieldClassModel, RefFieldClassSchema } from './demo.refclass.model';
 
 const YiAdminDemoSchema = new Schema<{
   strField: string;
@@ -171,10 +171,10 @@ const YiAdminDemoSchema = new Schema<{
   },
   dateField: Date,
   objIdField: Types.ObjectId,
-  refField: {
-    type: RefFieldClassSchema,
-    ref: RefFieldClassModel,
-  },
+  // refField: {
+  //   // type: RefFieldClassSchema,
+  //   ref: RefFieldClassModel,
+  // },
 }, {
   timestamps: true,
 });

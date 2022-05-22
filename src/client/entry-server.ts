@@ -1,6 +1,18 @@
 import { createApp } from './create-app';
 import { renderToString } from '@vue/server-renderer';
 
+interface SSRParam {
+  assetsPath: string;
+  csrfParam: {
+     query?: {
+        [key: string]: string;
+     };
+     body?: {
+        [key: string]: string;
+     };
+  };
+}
+
 /**
  * 服务端渲染函数
  * @param page
@@ -10,14 +22,14 @@ import { renderToString } from '@vue/server-renderer';
 export async function render(page: string, context: {
     query?: Record<string, any>;
     baseURL: string;
-    ssrParams: any
+    ssrParams: SSRParam
   }, manifest: Record<string, string[]>) {
   const { app, store, matchedRouter } = await createApp(page, context.query || {});
 
   // @ts-ignore
   if (typeof matchedRouter.components.default.fetch === 'function') {
     // @ts-ignore
-    await typeof matchedRouter.components.default.fetch({
+    await matchedRouter.components.default.fetch({
       store,
     });
   }
@@ -38,6 +50,7 @@ export async function render(page: string, context: {
     query: context.query || {},
     state: store ? store.state : {},
     baseURL: context.baseURL,
+    csrfParam: context.ssrParams.csrfParam,
   };
 
   return [html, preloadLinks, initState];

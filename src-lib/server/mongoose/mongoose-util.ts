@@ -1,4 +1,3 @@
-import { NativeDate } from 'mongoose';
 
 export function tileResult(data: any): {
     [key: string]: any;
@@ -52,7 +51,7 @@ export function getSchemaBoolean(v?: boolean | (() => boolean) | [boolean, strin
   }
 }
 
-export function getSchemaNumber(v?: number | NativeDate | [number, string] | [NativeDate, string] | readonly [number, string] | readonly [NativeDate, string]): number | undefined {
+export function getSchemaNumber(v?: number | Date | [number, string] | [Date, string] | readonly [number, string] | readonly [Date, string]): number | undefined {
   if (typeof v === 'number') return v;
   if (Array.isArray(v)) {
     const t = v[0];

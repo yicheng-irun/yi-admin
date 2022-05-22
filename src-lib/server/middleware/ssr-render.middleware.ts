@@ -39,12 +39,13 @@ export async function createExpressSsrMiddleware(param: {
             }, manifest)) as [string, string, {
           page: string;
         }];
-        const html = templateT.replace(`<!--preload-links-->`, preloadLinks)
+        const html = templateT.replace(`<!--preload-links-->`, preloadLinks.replace(/\/__vite_base_public_path_\//g, baseURL))
             .replace(/="\/assets\//g, () => {
               return `="${baseURL}assets/`;
             })
             .replace('<!--app-html-->', serverRenderHtml)
-            .replace('<!--init-state-->', `<script>var __INIT_STATE__=${JSON.stringify(initState)}</script>`);
+            .replace('<!--init-state-->', `<script>var __INIT_STATE__=${JSON.stringify(initState)}</script>`)
+            .replace('window._publicPath="/"', 'window._publicPath="' + baseURL + '"');
         res.send(html);
       } catch (e) {
         if (param.vite) {

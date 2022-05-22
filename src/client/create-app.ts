@@ -59,6 +59,7 @@ export async function createApp(page: string, query: Record<string, any>): Promi
   useNaiveUi(app);
 
   const router = createRouter(page);
+
   router.replace({
     path: page,
     query,
