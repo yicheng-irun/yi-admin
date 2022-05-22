@@ -3,16 +3,43 @@
     class="form-component-string-wang-editor"
   >
     <div
-      ref="textarea"
       class="wang-wrapper"
-    ></div>
+    >
+      <WangEditorToolbarComp
+        style="border-bottom: 1px solid #eee"
+        :editor="editorRef"
+        :defaultConfig="toolbarConfig"
+        :mode="'default'"
+      />
+      <WangEditorComp
+        v-model="props.editFormData[props.objectKey]"
+        :defaultConfig="editorConfig"
+        @onCreated="handleCreated"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, PropType, ref, watch } from 'vue';
-import { loadStyle, loadScript } from '../../../lib/load-file';
+import { defineAsyncComponent, getCurrentInstance, onBeforeUnmount, PropType, shallowRef } from 'vue';
 import { useAxios } from '../../../plugins/axiox.client';
+import type { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor';
+
+const WangEditorComp = defineAsyncComponent({
+  loader: async () => {
+    // @ts-ignore
+    import('@wangeditor/editor/dist/css/style.css');
+    const { Editor } = await import('@wangeditor/editor-for-vue');
+    return Editor;
+  },
+});
+
+const WangEditorToolbarComp = defineAsyncComponent({
+  loader: async () => {
+    const { Toolbar } = await import('@wangeditor/editor-for-vue');
+    return Toolbar;
+  },
+});
 
 const props = defineProps({
   config: { type: Object as PropType<{
@@ -24,7 +51,7 @@ const props = defineProps({
   },
   },
   editFormData: {
-    type: Object as PropType<Record<string, unknown>>,
+    type: Object as PropType<Record<string, string>>,
     default() {
       return {};
     },
@@ -37,43 +64,14 @@ const props = defineProps({
   },
 });
 
-function handlerInput(value: string) {
-  props.editFormData[props.objectKey] = value;
-}
 
-const textarea = ref<HTMLTextAreaElement>();
+// 编辑器实例，必须用 shallowRef
+const editorRef = shallowRef();
 
-const value = computed((): string => {
-  return props.editFormData[props.objectKey] as string || '';
-});
+const handleCreated = (editor: IDomEditor) => {
+  editorRef.value = editor; // 记录 editor 实例，重要！
+};
 
-
-declare class WangEditor {
-  constructor(div: HTMLTextAreaElement)
-  public customConfig: {
-    onchange?(html: string): void;
-    onchangeTimeout?: number;
-    showFullScreen?: boolean;
-    uploadImgMaxSize?: number;
-    uploadImgAccept?: string[];
-    customUploadImg?(files: File[], inserImgFunc: (url: string) => void): void;
-  };
-  public txt: {
-    html(newHtml?: string): string;
-    text(): string;
-  };
-  create(): void
-}
-
-let editor: WangEditor;
-
-watch(value, (value: string) => {
-  if (editor) {
-    if (editor.txt.html() !== value) {
-      editor.txt.html(value);
-    }
-  }
-});
 
 const $axios = useAxios();
 const ctx = getCurrentInstance();
@@ -104,56 +102,54 @@ async function uploadImage(file: File): Promise<string> {
   throw new Error(rsp?.data?.message || '上传文件失败');
 }
 
+const toolbarConfig: Partial<IToolbarConfig> = {
 
-async function initWangEditor() {
-  if (editor) return;
-  loadStyle('https://cdn.bootcdn.net/ajax/libs/wangEditor/3.1.1/wangEditor.min.css');
-  await loadScript('https://cdn.bootcdn.net/ajax/libs/wangEditor/3.1.1/wangEditor.min.js');
+};
 
-  // @ts-ignore
-  const E: WangEditor = window.wangEditor;
-
-  // @ts-ignore
-  editor = new E(textarea.value);
-
-  editor.customConfig.onchange = function(html) {
-    handlerInput(html);
-  };
-  editor.customConfig.onchangeTimeout = 500;
-  if (props.config.uploadImgMaxSize) {
-    editor.customConfig.uploadImgMaxSize = props.config.uploadImgMaxSize;
-  }
-  editor.customConfig.uploadImgAccept = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-  editor.customConfig.customUploadImg = function(files, insert) {
-    files.forEach((file) => {
-      uploadImage(file).then((url) => {
-        insert(url);
-      }).catch((e) => {
-        if (e instanceof Error) {
-          $message.error(e.message);
-        }
-      });
-    });
-  };
-  editor.create();
-  if (value.value) {
-    editor.txt.html(value.value);
-  }
+const editorConfig: Partial<IEditorConfig> = {};
+editorConfig.placeholder = '请输入内容';
+if (!editorConfig.MENU_CONF) {
+  editorConfig.MENU_CONF = {};
 }
+editorConfig.MENU_CONF['uploadImage'] = {
+  // 单个文件的最大体积限制，默认为 2M
+  maxFileSize: 2 * 1024 * 1024, // 1M
+  async customUpload(file: File, insertFn: (url: string, alt: string, href: string) => void) {
+    try {
+      // file 即选中的文件
+      console.log(file);
+      // 自己实现上传，并得到图片 url alt href
+      const url = await uploadImage(file);
+      // 最后插入图片
+      insertFn(url, url, url);
+    } catch (e) {
+      if (e instanceof Error) {
+        $message.error(e.message);
+      }
+    }
+  },
+};
 
-onMounted(() => {
-  initWangEditor();
+
+// 组件销毁时，也及时销毁编辑器
+onBeforeUnmount(() => {
+  const editor = editorRef.value;
+  if (editor == null) return;
+  editor.destroy();
 });
+
 </script>
 
 <style lang="scss">
 .form-component-string-wang-editor {
-   position: relative;
-   font-size: 1em;
-   max-width: 60em;
-   line-height: 1.5;
-   >.wang-wrapper {
-      min-height: 10em;
-   }
+  position: relative;
+  font-size: 1em;
+  max-width: 60em;
+  line-height: 1.5;
+  >.wang-wrapper {
+    position: relative;
+    width: 1000px;
+    max-width: 100%;
+  }
 }
 </style>

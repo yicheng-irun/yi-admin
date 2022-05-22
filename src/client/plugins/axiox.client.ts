@@ -18,13 +18,22 @@ export function axiosClientPlugin(baseURL: string, app: App, csrfParam: {
 
   instance.interceptors.request.use((config) => {
     if (config.method === 'post') {
-      if (!config.data) {
-        config.data = {};
+      if (config.data instanceof FormData) {
+        if (csrfParam.body) {
+          Object.keys(csrfParam.body).forEach((key) => {
+            config.data.append(key, csrfParam.body?.[key]);
+          });
+        }
+      } else if (typeof config.data === 'object') {
+        config.data = {
+          ...config.data,
+          ...csrfParam.body,
+        };
+      } else {
+        config.data = {
+          ...csrfParam.body,
+        };
       }
-      config.data = {
-        ...config.data,
-        ...csrfParam.body,
-      };
       config.params = {
         ...config.params,
         ...csrfParam.query,
