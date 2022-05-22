@@ -1,16 +1,16 @@
 
 <template>
-  <n-config-provider :theme-overrides="themeOverrides">
-    <no-ssr>
+  <no-ssr>
+    <n-config-provider :theme-overrides="themeOverrides">
       <n-message-provider>
         <message-api ></message-api>
       </n-message-provider>
       <n-notification-provider>
         <notification-api></notification-api>
       </n-notification-provider>
-    </no-ssr>
-    <router-view />
-  </n-config-provider>
+      <router-view />
+    </n-config-provider>
+  </no-ssr>
 </template>
 
 <script setup lang="ts">
