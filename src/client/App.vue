@@ -1,12 +1,14 @@
 
 <template>
   <n-config-provider :theme-overrides="themeOverrides">
-    <n-message-provider>
-      <message-api ></message-api>
-    </n-message-provider>
-    <n-notification-provider>
-      <notification-api></notification-api>
-    </n-notification-provider>
+    <no-ssr>
+      <n-message-provider>
+        <message-api ></message-api>
+      </n-message-provider>
+      <n-notification-provider>
+        <notification-api></notification-api>
+      </n-notification-provider>
+    </no-ssr>
     <router-view />
   </n-config-provider>
 </template>
