@@ -1,17 +1,16 @@
 import { App, createSSRApp } from 'vue';
 import {
-  createMemoryHistory,
   createRouter as _createRouter,
-  RouteLocationMatched,
+  createWebHistory,
   Router,
   RouteRecordRaw,
 } from 'vue-router';
-import { Store } from 'vuex';
 import RootApp from './App.vue';
 import NoSsr from './components/no-ssr.vue';
 import './components/base-layout.scss';
 import { useNaiveUi } from './plugins/naive-ui';
 import { publicPath } from './lib/public-path';
+import { createPinia } from 'pinia';
 
 // @ts-ignore
 const pages = import.meta.glob('./pages/**/*.page.vue');
@@ -32,11 +31,11 @@ Object.keys(pages).forEach((path: string) => {
   }
 });
 
-console.log(routes)
+console.log(routes);
 
 export function createRouter(page: string): Router {
   return _createRouter({
-    history: createMemoryHistory(),
+    history: createWebHistory(),
     routes,
   });
 }
@@ -45,40 +44,41 @@ export function createRouter(page: string): Router {
 export async function createApp(): Promise<{
   app: App<Element>;
   router: Router,
-  matchedRouter: RouteLocationMatched
-  store?: Store<unknown>,
   }> {
   const app = createSSRApp(RootApp);
   app.component('no-ssr', NoSsr);
-  // useAntDesign(app);
   useNaiveUi(app);
 
-
   const router = createRouter( window.location.pathname);
+  const pinia = createPinia();
+  app.use(pinia);
 
-  await router.isReady();
+  // await router.isReady();
+  // console.log('router ready');
   app.use(router);
 
-  if (!router.currentRoute.value.matched.length) {
-    throw new Error('404');
-  }
-  const [matchedRouter] = router.currentRoute.value.matched;
-  const components = matchedRouter.components;
+  // console.log(router.currentRoute);
 
-  let store: Store<unknown> | undefined;
+  // if (!router.currentRoute.value.matched.length) {
+  //   throw new Error('404');
+  // }
+  // const [matchedRouter] = router.currentRoute.value.matched;
+  // const components = matchedRouter.components;
 
-  console.log(matchedRouter)
+  // let store: Store<unknown> | undefined;
 
-  // @ts-ignore
-  if (typeof components.default.createStore === 'function') {
-    // @ts-ignore
-    store = components.default.createStore({
-      router,
-    });
-    if (store) {
-      app.use(store);
-    }
-  }
+  // console.log(matchedRouter);
 
-  return { app, router, matchedRouter, store };
+  // // @ts-ignore
+  // if (typeof components.default.createStore === 'function') {
+  //   // @ts-ignore
+  //   store = components.default.createStore({
+  //     router,
+  //   });
+  //   if (store) {
+  //     app.use(store);
+  //   }
+  // }
+
+  return { app, router };
 }

@@ -1,4 +1,5 @@
-import { createStore } from 'vuex';
+import { defineStore } from 'pinia';
+import { axiosInstance } from '../../plugins/axios.instance';
 
 export interface SiteMenu {
   icon: string;
@@ -18,48 +19,49 @@ export interface IndexPageState {
     iframeSrc: string;
 }
 
-export function createPageStore() {
-  return createStore<IndexPageState>({
-    state: {
+export const useStore = defineStore('indexPage', {
+  state() {
+    const state: IndexPageState = {
       siteMenu: null,
       siteConfig: null,
       iframeSrc: '',
-    },
-    actions: {
-      async loadSiteMenu() {
-        if (this.state.siteMenu) return;
-        try {
-          const rsp = await this.$axios.get<{
+    };
+    return state;
+  },
+  actions: {
+    async loadSiteMenu() {
+      if (this.siteMenu) return;
+      try {
+        const rsp = await axiosInstance.get<{
             success: boolean;
             data: SiteMenu
-          }>('site-menu/');
-          if (rsp.data.success) {
-            this.state.siteMenu = rsp.data.data;
-          }
-        } catch (e) {
-          console.error(e);
+          }>('/api/site-menu/');
+        if (rsp.data.success) {
+          this.siteMenu = rsp.data.data;
         }
-      },
-      async loadSiteConfig() {
-        if (this.state.siteConfig) return;
-        try {
-          const rsp = await this.$axios.get<{
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async loadSiteConfig() {
+      if (this.siteConfig) return;
+      try {
+        const rsp = await axiosInstance.get<{
             success: boolean;
             data: SiteConfig
-          }>('site-config/');
-          if (rsp.data.success) {
-            this.state.siteConfig = rsp.data.data;
-          }
-        } catch (e) {
-          console.error(e);
+          }>('/api/site-config/');
+        if (rsp.data.success) {
+          this.siteConfig = rsp.data.data;
         }
-      },
-      async loadData() {
-        await Promise.all([
-          this.dispatch('loadSiteMenu'),
-          this.dispatch('loadSiteConfig'),
-        ]);
-      },
+      } catch (e) {
+        console.error(e);
+      }
     },
-  });
-}
+    async loadData() {
+      await Promise.all([
+        this.loadSiteMenu(),
+        this.loadSiteConfig(),
+      ]);
+    },
+  },
+});

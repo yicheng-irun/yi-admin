@@ -8,7 +8,7 @@
         <Icon :icon="collapsed ? 'zhedie2' : 'zhedie1'" />
       </span>
       <span class="site-name">
-        {{ siteConfig?.siteName }}
+        {{ state.siteConfig?.siteName }}
       </span>
     </div>
     <div class="admin-main">
@@ -24,7 +24,7 @@
           @collapse="collapsed = true"
           @expand="collapsed = false"
         >
-          <left-block v-if="siteMenu" :collapsed="collapsed" />
+          <left-block v-if="state.siteMenu" :collapsed="collapsed" />
         </n-layout-sider>
 
         <n-layout-content class="iframe-wrapper">
@@ -41,42 +41,24 @@
 </template>
 
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { createPageStore, IndexPageState, SiteConfig, SiteMenu } from './index.store';
+<script lang="ts" setup>
+import { useStore } from './index.store';
 import Icon from '../../components/Icon.vue';
 import LeftBlock from './left-block.vue';
+import { onMounted, ref } from 'vue';
 
-export default defineComponent({
-  components: {
-    Icon,
-    LeftBlock,
-  },
-  createStore: createPageStore,
-  data() {
-    return {
-      collapsed: false,
-    };
-  },
-  mounted() {
-    this.$store.dispatch('loadData').then(() => {
-      window.document.title = this.siteConfig?.siteName || 'yi-admin';
-    });
-  },
-  computed: {
-    state(): IndexPageState {
-      return this.$store.state;
-    },
-    siteMenu(): SiteMenu | null {
-      return this.state.siteMenu;
-    },
-    siteConfig(): SiteConfig | null {
-      return this.state.siteConfig;
-    },
-  },
+const store = useStore();
+
+const state = store.$state;
+
+onMounted(() => {
+  store.loadData().then(() => {
+    window.document.title = state.siteConfig?.siteName || 'yi-admin';
+  });
 });
-</script>
 
+const collapsed = ref(false);
+</script>
 
 <style lang="scss">
 html, body {

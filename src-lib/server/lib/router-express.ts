@@ -1,4 +1,4 @@
-import express, { Handler, NextFunction, RequestHandler } from 'express';
+import express, { Handler, NextFunction } from 'express';
 import { resolve } from 'path';
 import url, { URL } from 'url';
 import bodyParse from 'co-body';
@@ -8,10 +8,9 @@ import { EditBaseType } from './edit-types/edit-base-type';
 import { ListBaseType } from './list-types/list-base-type';
 import { FilterBaseType } from './filter-types/filter-base-type';
 import { ModelAdminListAction } from '..';
-import type { ViteDevServer } from 'vite';
-import { createExpressSsrMiddleware, expressRenderFunction } from '../middleware/ssr-render.middleware';
+import { expressRenderFunction } from '../middleware/ssr-render.middleware';
 import { readFileSync } from 'fs';
-import { Server } from 'http';
+import { createApiRouter } from './router-api';
 
 type Response = express.Response & {
    yiAdminSSRRender?: expressRenderFunction;
@@ -384,7 +383,7 @@ export async function createExpressRouter({
   basePath: string;
 }): Promise<express.Router> {
   if (!basePath.endsWith('/')) {
-    throw new Error('"basePath" option should end with a slash')
+    throw new Error('"basePath" option should end with a slash');
   }
 
   // eslint-disable-next-line new-cap
@@ -420,20 +419,12 @@ export async function createExpressRouter({
     yiAdmin.permissionExpress(req, res, next);
   });
 
-  router.get('/site-menu/', safeJson(async (req, res) => {
-    res.json({
-      success: true,
-      data: yiAdmin.siteNavMenu,
-    });
-  }));
-  router.get('/site-config/', safeJson(async (req, res) => {
-    res.json({
-      success: true,
-      data: yiAdmin.siteConfig,
-    });
-  }));
 
   appendModelAdminRouter(yiAdmin, router);
+  router.use('/api', createApiRouter({
+    yiAdmin,
+    basePath,
+  }));
 
 
   const assetsPath = resolve(__dirname, '../../../dist/client/assets');
@@ -441,12 +432,12 @@ export async function createExpressRouter({
 
   const handler: Handler = (req, res) => {
     const html = readFileSync(resolve(__dirname, '../../../dist/client/index.html')).toString()
-    .replace('window._publicPath="/"', 'window._publicPath="' + basePath + '"');
-    res.type('html').send(html)
-  }
-  router.get('/', handler)
-  router.get('/list', handler)
-  router.get('/edit', handler)
+        .replace('window._publicPath="/"', 'window._publicPath="' + basePath + '"');
+    res.type('html').send(html);
+  };
+  router.get('/', handler);
+  router.get('/list', handler);
+  router.get('/edit', handler);
 
   return router;
 }

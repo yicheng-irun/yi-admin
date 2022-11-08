@@ -14,7 +14,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { MenuOptionsItem, transformSiteMenuOptions } from './index-page-utils';
-import { IndexPageState, SiteMenu } from './index.store';
+import { IndexPageState, SiteMenu, useStore } from './index.store';
 
 
 export default defineComponent({
@@ -34,9 +34,15 @@ export default defineComponent({
       console.log('update', v);
     },
   },
+  setup() {
+    const store = useStore();
+    return {
+      store,
+    };
+  },
   computed: {
     state(): IndexPageState {
-      return this.$store.state;
+      return this.store.$state;
     },
     siteMenu(): SiteMenu | null {
       return this.state.siteMenu;
