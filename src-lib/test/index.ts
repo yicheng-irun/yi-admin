@@ -8,10 +8,9 @@ import myadmin2 from './admin2';
 import uploadsRouter from './uploads-router';
 import { getEnv } from './get-env';
 import koaConnect from 'koa-connect';
+import { createServer } from 'http';
 
 config();
-
-process.env.YI_ADMIN_DEV_MODE = 'true';
 
 const MONGODB_URI = getEnv('MONGODB_URI', 'mongodb://localhost:27017/');
 
@@ -20,8 +19,8 @@ export default async function createApp(): Promise<Koa> {
 
   const app = new Koa();
 
-  const adminRouter1 = await myadmin.createExpressRouter('/router1');
-  const adminRouter2 = await myadmin2.createExpressRouter('/router2');
+  const adminRouter1 = await myadmin.createExpressRouter('/router1/');
+  const adminRouter2 = await myadmin2.createExpressRouter('/router2/');
 
   // @ts-ignore
   app.use(koaConnect((...t) => adminRouter1(...t)));
@@ -33,18 +32,29 @@ export default async function createApp(): Promise<Koa> {
   return app;
 }
 
-export async function createApp2(): Promise<express.Application> {
+export async function createApp2() {
   await mongoose.connect(MONGODB_URI, {});
 
   const app = express();
+  const server = createServer(app);
 
   app.use('/uploads', express.static(resolve(__dirname, '../../uploads')));
 
-  app.use('/test', await myadmin.createExpressRouter('/test'));
+  app.use('/test/', await myadmin.createExpressRouter('/test/', {
+    hmr: {
+      server,
+      clientPort: 5000
+    }
+  }));
 
-  app.use('/test2', await myadmin2.createExpressRouter('/test2'));
+  // app.use('/test2/', await myadmin2.createExpressRouter('/test2/', {
+  //   hmr: {
+  //     server,
+  //     clientPort: 5000
+  //   }
+  // }));
 
-  return app;
+  return server;
 }
 
 async function start(): Promise<void> {

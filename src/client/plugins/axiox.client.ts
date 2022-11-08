@@ -4,12 +4,12 @@ import axios, { AxiosInstance } from 'axios';
 
 const AxiosKey = 'yiadminAxios';
 
-export function axiosClientPlugin(baseURL: string, app: App, csrfParam: {
+export function axiosClientPlugin(app: App, csrfParam: {
   query?: {
-     [key: string]: string;
+    [key: string]: string;
   };
   body?: {
-     [key: string]: string;
+    [key: string]: string;
   };
 }) {
   const instance = axios.create({

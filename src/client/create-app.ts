@@ -11,6 +11,7 @@ import RootApp from './App.vue';
 import NoSsr from './components/no-ssr.vue';
 import './components/base-layout.scss';
 import { useNaiveUi } from './plugins/naive-ui';
+import { publicPath } from './lib/public-path';
 
 // @ts-ignore
 const pages = import.meta.glob('./pages/**/*.page.vue');
@@ -19,35 +20,29 @@ Object.keys(pages).forEach((path: string) => {
   const match = path.match(/\.\/pages(.*)\.page\.vue$/);
   if (match) {
     const name = match[1].toLocaleLowerCase();
-    let routerPath = name.replace(/\/index$/, '');
-    if (routerPath === '/index') {
-      routerPath = '/';
+    let routerPath = name.replace(/\/index$/, '').replace(/^\//, '');
+    if (routerPath === 'index') {
+      routerPath = '';
     }
 
     routes.push({
-      path: routerPath,
+      path: publicPath + routerPath,
       component: pages[path],
     });
-
-    if (routerPath !== name) {
-      routes.push({
-        path: name,
-        component: pages[path],
-      });
-    }
   }
 });
 
+console.log(routes)
+
 export function createRouter(page: string): Router {
   return _createRouter({
-    // history: import.meta.env.SSR ? createMemoryHistory() : createWebHashHistory(),
     history: createMemoryHistory(),
     routes,
   });
 }
 
 
-export async function createApp(page: string, query: Record<string, any>): Promise<{
+export async function createApp(): Promise<{
   app: App<Element>;
   router: Router,
   matchedRouter: RouteLocationMatched
@@ -58,12 +53,8 @@ export async function createApp(page: string, query: Record<string, any>): Promi
   // useAntDesign(app);
   useNaiveUi(app);
 
-  const router = createRouter(page);
 
-  router.replace({
-    path: page,
-    query,
-  });
+  const router = createRouter( window.location.pathname);
 
   await router.isReady();
   app.use(router);
@@ -75,6 +66,8 @@ export async function createApp(page: string, query: Record<string, any>): Promi
   const components = matchedRouter.components;
 
   let store: Store<unknown> | undefined;
+
+  console.log(matchedRouter)
 
   // @ts-ignore
   if (typeof components.default.createStore === 'function') {

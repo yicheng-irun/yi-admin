@@ -22,14 +22,12 @@ const initState: {
   page: string;
   query: Record<string, any>;
   baseURL: string;
-  state: Record<string, unknown>;
   csrfParam: CSRFParam
 } =
   // @ts-ignore
   window.__INIT_STATE__ || {
     page: window.location.pathname,
     query: {},
-    state: {},
     baseURL: '/',
     csrfParam: {},
   };
@@ -37,12 +35,10 @@ const initState: {
 async function start() {
   const {
     app,
-    store,
-  } = await createApp(initState.page, initState.query);
-  axiosClientPlugin(initState.baseURL, app, initState.csrfParam);
-  if (store) {
-    store.replaceState(initState.state);
-  }
+  } = await createApp();
+  // @ts-ignore
+  axiosClientPlugin(app, initState.csrfParam);
+
   app.mount('body>#app', true);
 }
 

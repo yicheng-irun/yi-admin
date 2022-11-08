@@ -1,4 +1,4 @@
-import express, { NextFunction } from 'express';
+import express, { Handler, NextFunction, RequestHandler } from 'express';
 import { resolve } from 'path';
 import url, { URL } from 'url';
 import bodyParse from 'co-body';
@@ -10,6 +10,8 @@ import { FilterBaseType } from './filter-types/filter-base-type';
 import { ModelAdminListAction } from '..';
 import type { ViteDevServer } from 'vite';
 import { createExpressSsrMiddleware, expressRenderFunction } from '../middleware/ssr-render.middleware';
+import { readFileSync } from 'fs';
+import { Server } from 'http';
 
 type Response = express.Response & {
    yiAdminSSRRender?: expressRenderFunction;
@@ -381,37 +383,12 @@ export async function createExpressRouter({
   yiAdmin: YiAdmin;
   basePath: string;
 }): Promise<express.Router> {
-  // eslint-disable-next-line new-cap
-  const router = express.Router();
-
-  const isDevMode = process.env.YI_ADMIN_DEV_MODE === 'true';
-  let vite: ViteDevServer;
-
-  if (isDevMode) {
-    const { createServer } = await import('vite');
-    vite = await createServer({
-      root: resolve(__dirname, '../../../'),
-      base: basePath,
-      server: {
-        middlewareMode: 'ssr',
-        watch: {
-          usePolling: false,
-          interval: 100,
-        },
-      },
-    });
-
-    router.use(vite.middlewares);
-  } else {
-    const assetsPath = resolve(__dirname, '../../../dist/client/assets');
-    router.use('/assets', express.static(assetsPath));
+  if (!basePath.endsWith('/')) {
+    throw new Error('"basePath" option should end with a slash')
   }
 
-  router.use(await createExpressSsrMiddleware({
-    vite,
-    baseURL: basePath,
-  }));
-
+  // eslint-disable-next-line new-cap
+  const router = express.Router();
 
   const clientStaticPath = resolve(__dirname, '../../../static');
   router.use('/__yi-admin-assets__/static', express.static(clientStaticPath));
@@ -443,11 +420,6 @@ export async function createExpressRouter({
     yiAdmin.permissionExpress(req, res, next);
   });
 
-  router.get('/', checkRedirectMiddleware, async (req: express.Request, res: Response) => {
-    if (res.yiAdminSSRRender) {
-      await res.yiAdminSSRRender('/', getBaseRenderSSRParams(yiAdmin, req, res, ''));
-    }
-  });
   router.get('/site-menu/', safeJson(async (req, res) => {
     res.json({
       success: true,
@@ -462,6 +434,19 @@ export async function createExpressRouter({
   }));
 
   appendModelAdminRouter(yiAdmin, router);
+
+
+  const assetsPath = resolve(__dirname, '../../../dist/client/assets');
+  router.use('/assets', express.static(assetsPath));
+
+  const handler: Handler = (req, res) => {
+    const html = readFileSync(resolve(__dirname, '../../../dist/client/index.html')).toString()
+    .replace('window._publicPath="/"', 'window._publicPath="' + basePath + '"');
+    res.type('html').send(html)
+  }
+  router.get('/', handler)
+  router.get('/list', handler)
+  router.get('/edit', handler)
 
   return router;
 }

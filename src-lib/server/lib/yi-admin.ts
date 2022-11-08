@@ -3,6 +3,7 @@ import { ModelAdminBase } from './model-admin-base';
 import { SiteNavMenu } from './site-nav-menu';
 import { EditTypes, ListTypes } from './types';
 import { createExpressRouter } from './router-express';
+import { Server } from 'http';
 
 interface CsrfParamResult {
    query?: {
@@ -86,7 +87,12 @@ export class YiAdmin {
     [name: string]: ModelAdminBase;
   } = {};
 
-  createExpressRouter(basePath: string = '/'): Promise<express.Router> {
+  createExpressRouter(basePath: string = '/', options: {
+    hmr?: {
+      server: Server;
+      clientPort: number;
+    }
+  } = {}): Promise<express.Router> {
     return createExpressRouter({
       yiAdmin: this,
       basePath,
