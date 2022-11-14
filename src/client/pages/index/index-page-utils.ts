@@ -1,6 +1,7 @@
 import { h, RendererElement, RendererNode, VNode } from 'vue';
 import { SiteMenu } from './index.store';
 import Icon from '../../components/Icon.vue';
+import { publicPath } from '../../lib/public-path';
 
 
 function renderIcon(icon: string) {
@@ -38,9 +39,12 @@ export interface MenuOptionsItem {
 export function transformSiteMenuOptions(menu: SiteMenu, key: string = '0'): MenuOptionsItem {
   const result: MenuOptionsItem = {
     key,
-    label: menu.link? renderLabel(menu.title, menu.link, menu.target) : menu.title,
+    label: menu.link ? renderLabel(menu.title, menu.link, menu.target) : menu.title,
     link: menu.link,
   };
+  if (menu.link) {
+    result.link = menu.link.replace(/#basePath#/, publicPath);
+  }
   if (menu.icon) {
     result.icon = renderIcon(menu.icon);
   }

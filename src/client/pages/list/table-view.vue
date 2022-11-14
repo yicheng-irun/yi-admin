@@ -22,7 +22,7 @@
             <no-ssr>
               <n-select
                 v-if="checkedIdList"
-                v-model:value="batchActionIndex"
+                v-model:value="data.batchActionIndex"
                 placeholder="请选择操作"
                 style="min-width: 150px"
                 :class="checkedIdList.length === 0 ? 'dashed' : ''"
@@ -196,232 +196,222 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { nextTick, reactive } from 'vue';
 import ListComponents from './list-components';
-import { ListActionsItem, ListDataItem, ListFieldsItem, ModelAdminListStateType } from './store';
+import { ListActionsItem, useListPageStore } from './store';
 import TableSort from './table-sort.vue';
 import TableFilter from './table-filter.vue';
 import TableAction from './table-action.vue';
 import Icon from '../../components/Icon.vue';
+import { computed } from '@vue/reactivity';
+import { useMessage, useNotification } from 'naive-ui';
+import { publicPath } from '../../lib/public-path';
+import { axiosInstance } from '../../plugins/axios.instance';
 
-export default defineComponent({
-  components: {
-    TableSort,
-    TableFilter,
-    TableAction,
-    Icon,
-  },
-  data() {
-    return {
-      batchActionIndex: '',
-    };
-  },
-  computed: {
-    state(): ModelAdminListStateType {
-      return this.$store.state;
-    },
-    pageIndex(): number {
-      return this.state.pageIndex;
-    },
-    listFields(): ListFieldsItem[] {
-      return this.state.listFields;
-    },
-    listActions(): ListActionsItem[] {
-      return this.state.listActions;
-    },
-    listData(): ListDataItem[] {
-      return this.state.listData;
-    },
-    listCheckedStatusArray(): boolean[] {
-      return this.state.listCheckedStatusArray;
-    },
+const notification = useNotification();
+const message = useMessage();
 
-    checkedIdList(): string[] {
-      const idList: string[] = [];
-      const { listData } = this;
-      const { listCheckedStatusArray } = this;
-      for (let i = 0; i < listData.length; i += 1) {
-        const item = listData[i];
-        const status = listCheckedStatusArray[i] === true;
-        if (status) {
-          idList.push(item.id);
-        }
-      }
-      return idList;
-    },
+const data = reactive({
+  batchActionIndex: '',
+});
 
-    betListActions(): ListActionsItem[] {
-      return this.listActions.filter((t: ListActionsItem) => t.isBatchAction);
-    },
-    batchActionOptions(): {
-        value: number | string;
-        label: any;
-      }[] { // 批量操作的下拉选择框选项
-      const options: {
+const store = useListPageStore();
+const state = computed(() => store.$state);
+
+const pageIndex = computed(() => store.$state.pageIndex);
+const listFields = computed(() => store.$state.listFields);
+const listActions = computed(() => store.$state.listActions);
+const listData = computed(() => store.$state.listData);
+const listCheckedStatusArray = computed(() => store.$state.listCheckedStatusArray);
+
+const checkedIdList = computed(() =>{
+  const idList: string[] = [];
+  const { listData, listCheckedStatusArray } = store.$state;
+  for (let i = 0; i < listData.length; i += 1) {
+    const item = listData[i];
+    const status = listCheckedStatusArray[i] === true;
+    if (status) {
+      idList.push(item.id);
+    }
+  }
+  return idList;
+});
+
+const betListActions= computed(() => {
+  return store.$state.listActions.filter((t: ListActionsItem) => t.isBatchAction);
+});
+
+const batchActionOptions = computed(() => {
+  const options: {
         value: number | string;
         label: any;
       }[] = [{
         value: '',
         label: '请选择',
       }];
-      const actions = this.betListActions;
-      for (let i = 0; i < actions.length; i += 1) {
-        const element = actions[i];
-        options.push({
-          value: i,
-          label: element.actionName,
-        });
-      }
-      return options;
-    },
-    selectedBatchAction(): ListActionsItem | null { // 选中的批量操作action
-      if (typeof this.batchActionIndex === 'number') {
-        return this.betListActions[this.batchActionIndex];
-      }
-      return null;
-    },
-    rowListActions(): ListActionsItem[] {
-      return this.listActions.filter((t) => t.isTableRowAction);
-    },
-    allChecked(): boolean {
-      let isCheckedAll = true;
-      for (let i = 0; i < this.listCheckedStatusArray.length; i += 1) {
-        if (!this.listCheckedStatusArray[i]) {
-          isCheckedAll = false;
-          break;
-        }
-      }
-      return isCheckedAll;
-    },
-  },
-  methods: {
-    getComponent(componentName: string) {
-      if (Object.prototype.hasOwnProperty.call(ListComponents, componentName)) {
-        return ListComponents[componentName];
-      }
-      return ListComponents.base;
-    },
-    handelCheckAll() {
-      let v = true;
-      if (this.allChecked) {
-        v = false;
-      }
-      for (let i = 0; i < this.listCheckedStatusArray.length; i += 1) {
-        this.listCheckedStatusArray[i] = v;
-      }
-    },
-    async handleSizeChange(pageSize: number) {
-      this.$store.commit('setPageIndex', 1);
-      this.$store.commit('setPageSize', pageSize);
-      try {
-        await this.$store.dispatch('fetchListData');
-      } catch (e) {
-        if (e instanceof Error) {
-          this.$notification.error({
-            title: '出错了',
-            description: e?.message || '拉取数据出错了',
-            duration: 3000,
-          });
-        }
-      }
-    },
-    handleCurrentChange(v: number) {
-      const oldPageIndex = this.state.pageIndex;
-      // this.$store.commit('setPageIndex', 0); // 这么做是禁止element的翻页组件提前跳页
-      this.$nextTick(async () => {
-        this.$store.commit('setPageIndex', oldPageIndex); // 这么做是触发
-        try {
-          await this.$store.dispatch('fetchListData', { pageIndex: v });
-        } catch (e) {
-          if (e instanceof Error) {
-            this.$notification.error({
-              title: '出错了',
-              description: e?.message || '拉取数据出错了',
-              duration: 3000,
-            });
-          }
-        }
-      });
-    },
-
-    async createData() {
-      window.location.href = 'edit/';
-    },
-
-    async reloadData() {
-      try {
-        await this.$store.dispatch('fetchListData');
-      } catch (e) {
-        if (e instanceof Error) {
-          this.$notification.error({
-            title: '出错了',
-            description: e?.message || '拉取数据出错了',
-            duration: 3000,
-          });
-        }
-      }
-    },
-
-    async doBatchAction(actionObj: ListActionsItem | null) {
-      const idList = this.checkedIdList;
-      if (idList.length <= 0) {
-        this.$message.error('未勾选任何项目');
-        return;
-      }
-      if (actionObj) {
-        this.doActions(actionObj, idList);
-      }
-    },
-
-    async doActions(actionObj: ListActionsItem, ids: string[] = []) {
-      if (this.state.loading) return;
-      this.$store.commit('setLoading', true);
-      try {
-        const rsp = await this.$axios.post('list/action/', {
-          actionName: actionObj.actionName,
-          idList: ids,
-        });
-        const result = rsp.data;
-        if (result.success) {
-          const {
-            successfulNum = 0,
-            failedNum = 0,
-          } = result.data || {};
-          this.$notification.success({
-            title: `${actionObj.actionName} 执行完成`,
-            description: `${successfulNum} 项执行成功，${failedNum} 项执行失败`,
-            duration: 3000,
-          });
-        } else {
-          throw new Error(result?.message || `执行 ${actionObj.actionName} 操作失败了`);
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          this.$notification.error({
-            title: `${actionObj.actionName} 未执行完成`,
-            description: e?.message || `执行 ${actionObj.actionName} 操作失败了`,
-            duration: 3000,
-          });
-        }
-      } finally {
-        this.$store.commit('setLoading', false);
-      }
-
-      try {
-        await this.$store.dispatch('fetchListData');
-      } catch (e) {
-        if (e instanceof Error) {
-          this.$notification.error({
-            title: '出错了',
-            description: e?.message || '拉取数据出错了',
-            duration: 3000,
-          });
-        }
-      }
-    },
-  },
+  const actions = betListActions.value;
+  for (let i = 0; i < actions.length; i += 1) {
+    const element = actions[i];
+    options.push({
+      value: i,
+      label: element.actionName,
+    });
+  }
+  return options;
 });
+
+const selectedBatchAction = computed(() => {
+  if (typeof data.batchActionIndex === 'number') {
+    return betListActions.value[data.batchActionIndex];
+  }
+  return null;
+});
+
+const rowListActions = computed(() => {
+  return listActions.value.filter((t) => t.isTableRowAction);
+});
+
+const allChecked = computed(() => {
+  let isCheckedAll = true;
+  const arr = listCheckedStatusArray.value;
+  for (let i = 0; i < arr.length; i += 1) {
+    if (!arr[i]) {
+      isCheckedAll = false;
+      break;
+    }
+  }
+  return isCheckedAll;
+});
+
+function getComponent(componentName: string) {
+  if (Object.prototype.hasOwnProperty.call(ListComponents, componentName)) {
+    return ListComponents[componentName];
+  }
+  return ListComponents.base;
+}
+
+function handelCheckAll() {
+  let v = true;
+  if (allChecked.value) {
+    v = false;
+  }
+  for (let i = 0; i < listCheckedStatusArray.value.length; i += 1) {
+    listCheckedStatusArray.value[i] = v;
+  }
+}
+
+async function handleSizeChange(pageSize: number) {
+  store.$state.pageIndex = 1;
+  store.$state.pageSize = pageSize;
+  try {
+    await store.fetchListData();
+  } catch (e) {
+    if (e instanceof Error) {
+      notification.error({
+        title: '出错了',
+        description: e?.message || '拉取数据出错了',
+        duration: 3000,
+      });
+    }
+  }
+}
+
+function handleCurrentChange(v: number) {
+  const oldPageIndex = store.$state.pageIndex;
+  // this.$store.commit('setPageIndex', 0); // 这么做是禁止element的翻页组件提前跳页
+  nextTick(async () => {
+    store.$state.pageIndex= oldPageIndex; // 这么做是触发
+    try {
+      await store.fetchListData({ pageIndex: v });
+    } catch (e) {
+      if (e instanceof Error) {
+        notification.error({
+          title: '出错了',
+          description: e?.message || '拉取数据出错了',
+          duration: 3000,
+        });
+      }
+    }
+  });
+}
+
+function createData() {
+  window.location.href = publicPath + 'edit/' + location.search;
+}
+
+async function reloadData() {
+  try {
+    await store.fetchListData();
+  } catch (e) {
+    if (e instanceof Error) {
+      notification.error({
+        title: '出错了',
+        description: e?.message || '拉取数据出错了',
+        duration: 3000,
+      });
+    }
+  }
+}
+
+async function doActions(actionObj: ListActionsItem, ids: string[] = []) {
+  if (store.$state.loading) return;
+  store.$state.loading = true;
+  try {
+    const rsp = await axiosInstance.post('/api/list-action/', {
+      actionName: actionObj.actionName,
+      idList: ids,
+    });
+    const result = rsp.data;
+    if (result.success) {
+      const {
+        successfulNum = 0,
+        failedNum = 0,
+      } = result.data || {};
+      notification.success({
+        title: `${actionObj.actionName} 执行完成`,
+        description: `${successfulNum} 项执行成功，${failedNum} 项执行失败`,
+        duration: 3000,
+      });
+    } else {
+      throw new Error(result?.message || `执行 ${actionObj.actionName} 操作失败了`);
+    }
+  } catch (e) {
+    if (e instanceof Error) {
+      notification.error({
+        title: `${actionObj.actionName} 未执行完成`,
+        description: e?.message || `执行 ${actionObj.actionName} 操作失败了`,
+        duration: 3000,
+      });
+    }
+  } finally {
+    store.$state.loading = false;
+  }
+
+  try {
+    await store.fetchListData();
+  } catch (e) {
+    if (e instanceof Error) {
+      notification.error({
+        title: '出错了',
+        description: e?.message || '拉取数据出错了',
+        duration: 3000,
+      });
+    }
+  }
+}
+
+async function doBatchAction(actionObj: ListActionsItem | null) {
+  const idList = checkedIdList.value;
+  if (idList.length <= 0) {
+    message.error('未勾选任何项目');
+    return;
+  }
+  if (actionObj) {
+    doActions(actionObj, idList);
+  }
+}
+
 </script>
 
 <style lang="scss">

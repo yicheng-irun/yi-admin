@@ -37,15 +37,18 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue';
-import { useStore } from 'vuex';
-import { ModelAdminListStateType } from './store';
+import { useListPageStore } from './store';
 
 interface SelectOption {
   label: string;
   value: string;
 }
 
-const { state } = useStore<ModelAdminListStateType>();
+const store = useListPageStore();
+
+const state = computed(() => {
+  return store.$state;
+});
 
 const emit = defineEmits(['reloadData']);
 
@@ -58,8 +61,8 @@ function getSortOptions(): SelectOption[] {
     label: '- id 降序',
     value: '-_id',
   });
-  for (let i = 0; i < state.listFields.length; i += 1) {
-    const field = state.listFields[i];
+  for (let i = 0; i < store.$state.listFields.length; i += 1) {
+    const field = store.$state.listFields[i];
     const fieldNameAlias = field.fieldNameAlias || field.fieldName;
     options.push({
       label: `${fieldNameAlias} 增序(+)`,
@@ -74,14 +77,14 @@ function getSortOptions(): SelectOption[] {
 
 const sortOptionsList = computed((): SelectOption[][] => {
   const sortOptions = getSortOptions();
-  const result: SelectOption[][] = state.sortList.map((item, index) => {
+  const result: SelectOption[][] = store.$state.sortList.map((item, index) => {
     const newOptions: SelectOption[] = [];
     for (let i = 0; i < sortOptions.length; i += 2) {
       const option1 = sortOptions[i];
       const option2 = sortOptions[i + 1];
       if (item === option1.value || item === option2.value) {
         newOptions.push(option1, option2);
-      } else if (state.sortList.includes(option1.value) || state.sortList.includes(option2.value)) {
+      } else if (store.$state.sortList.includes(option1.value) || store.$state.sortList.includes(option2.value)) {
         //
       } else {
         newOptions.push(option1, option2);
@@ -94,14 +97,14 @@ const sortOptionsList = computed((): SelectOption[][] => {
 });
 
 function removeRule(index: number) {
-  state.sortList.splice(index, 1);
+  store.$state.sortList.splice(index, 1);
 }
 
 function createNewRule() {
-  state.sortList.push('');
+  store.$state.sortList.push('');
 }
 
-watch(state.sortList, () => {
+watch(store.$state.sortList, () => {
   emit('reloadData');
 });
 </script>

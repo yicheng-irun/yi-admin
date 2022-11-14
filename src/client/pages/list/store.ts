@@ -1,4 +1,5 @@
-import { createStore } from 'vuex';
+import { defineStore } from 'pinia';
+import { axiosInstance } from '../../plugins/axios.instance';
 
 export interface ListActionsItem {
    actionName: string;
@@ -62,22 +63,12 @@ export interface ModelAdminListStateType {
 }
 
 
-export function createPageStore() {
-  const filterForm = {
-  };
-  // if (runtime.query.filter) {
-  //    try {
-  //       const filterTemp = JSON.parse(runtime.query.filter);
-  //       filterForm = {
-  //          ...filterTemp,
-  //       };
-  //    } catch (e) {
-  //       //
-  //    }
-  // }
+const filterForm = {
+};
 
-  return createStore<ModelAdminListStateType>({
-    state: {
+export const useListPageStore = defineStore('listPage', {
+  state() {
+    const state:ModelAdminListStateType = {
       modelInfo: {
         title: '',
         name: '',
@@ -103,41 +94,44 @@ export function createPageStore() {
 
       listData: [],
       listCheckedStatusArray: [],
-    },
+    };
+    return state;
+  },
 
-    mutations: {
-      setLoading(state, value) {
-        state.loading = !!value;
-      },
-      setListActions(state, { data = [] } : { data: ListActionsItem[] }) {
-        const actions: ListActionsItem[] = [];
-        const exist: Record<string, boolean> = {};
-        data.forEach((item) => {
-          if (!Object.prototype.hasOwnProperty.call(exist, item.actionName)) {
-            actions.push(item);
-            exist[item.actionName] = true;
-          }
-        });
-        state.listActions = actions;
-      },
-      setListData(state, { dataList, total }) {
-        state.total = total;
-        state.listData = dataList;
-        const statusArray = new Array(dataList.length);
-        statusArray.fill(false);
-        state.listCheckedStatusArray = statusArray;
-      },
-      setPageSize(state, pageSize) {
-        state.pageSize = pageSize;
-      },
-      setPageIndex(state, pageIndex) {
-        state.pageIndex = pageIndex;
-      },
+  /*
+  mutations: {
+    setLoading(state, value) {
+      state.loading = !!value;
     },
-
-    actions: {
-      async fetchListFields() {
-        const rsp = await this.$axios.get<{
+    setListActions(state, { data = [] } : { data: ListActionsItem[] }) {
+      const actions: ListActionsItem[] = [];
+      const exist: Record<string, boolean> = {};
+      data.forEach((item) => {
+        if (!Object.prototype.hasOwnProperty.call(exist, item.actionName)) {
+          actions.push(item);
+          exist[item.actionName] = true;
+        }
+      });
+      state.listActions = actions;
+    },
+    setListData(state, { dataList, total }) {
+      state.total = total;
+      state.listData = dataList;
+      const statusArray = new Array(dataList.length);
+      statusArray.fill(false);
+      state.listCheckedStatusArray = statusArray;
+    },
+    setPageSize(state, pageSize) {
+      state.pageSize = pageSize;
+    },
+    setPageIndex(state, pageIndex) {
+      state.pageIndex = pageIndex;
+    },
+  },
+  */
+  actions: {
+    async fetchListFields() {
+      const rsp = await axiosInstance.get<{
            success: boolean;
            message?: string;
            data: {
@@ -148,61 +142,81 @@ export function createPageStore() {
             filterFields: ListFilterFieldsItem[];
             fields: ListFieldsItem[]
            }
-        }>('list/fields/', { });
-        const result = rsp.data;
-        if (result.success) {
-          this.state.modelInfo = result.data.modelInfo;
-          this.state.filterFields = result.data.filterFields;
-          this.state.listFields = result.data.fields;
-        } else {
-          throw new Error(result?.message || '拉取字段信息出错了');
-        }
-      },
+        }>('/api/list-fields/', {
+          params: {
+            modelName: '',
+          },
+        });
+      const result = rsp.data;
+      if (result.success) {
+        this.modelInfo = result.data.modelInfo;
+        this.filterFields = result.data.filterFields;
+        this.listFields = result.data.fields;
+      } else {
+        throw new Error(result?.message || '拉取字段信息出错了');
+      }
+    },
 
-      async fetchListActions() {
-        const rsp = await this.$axios.get<{
+    async fetchListActions() {
+      const rsp = await axiosInstance.get<{
            success: boolean;
            message?: string;
            data: ListActionsItem[]
-        }>('list/actions/', { });
-        const result = rsp.data;
-        if (result.success) {
-          this.commit('setListActions', result);
-        } else {
-          throw new Error(result?.message || '拉取操作信息出错了');
-        }
-      },
+        }>('/api/list-actions/', { });
+      const result = rsp.data;
+      if (result.success) {
+        const actions: ListActionsItem[] = [];
+        const exist: Record<string, boolean> = {};
+        result.data.forEach((item) => {
+          if (!Object.prototype.hasOwnProperty.call(exist, item.actionName)) {
+            actions.push(item);
+            exist[item.actionName] = true;
+          }
+        });
+        this.listActions = actions;
+      } else {
+        throw new Error(result?.message || '拉取操作信息出错了');
+      }
+    },
 
-      // 服务端请求，所以不需要错误请求
-      async fetchListData({ state }, {
-        pageIndex = state.pageIndex,
-      } = {}) {
-        if (state.loading) return;
-        this.commit('setLoading', true);
-        try {
-          const rsp = await this.$axios.get<{
+    // 服务端请求，所以不需要错误请求
+    async fetchListData( {
+      pageIndex,
+    }: { pageIndex?: number } = {}) {
+      const pIndex = pageIndex ?? this.pageIndex;
+      if (this.loading) return;
+      this.loading = true;
+      try {
+        const rsp = await axiosInstance.get<{
              success: boolean;
              message?: string;
-             data: ListDataItem[]
-          }>('list/data/', {
+             data: {
+              dataList: ListDataItem[],
+              total: number;
+             }
+          }>('/api/list-data/', {
             params: {
-              pageIndex,
-              pageSize: state.pageSize,
-              sort: state.sortList.filter((t) => !!t).join(' '),
-              filter: JSON.stringify(state.filterForm),
+              pageIndex: pIndex,
+              pageSize: this.pageSize,
+              sort: this.sortList.filter((t) => !!t).join(' '),
+              filter: JSON.stringify(this.filterForm),
             },
           });
-          const result = rsp.data;
-          if (result.success) {
-            this.commit('setListData', result.data);
-            this.commit('setPageIndex', pageIndex);
-          } else {
-            throw new Error(result?.message || '拉取列表数据出错了');
-          }
-        } finally {
-          this.commit('setLoading', false);
+        const result = rsp.data;
+        if (result.success) {
+          const { dataList, total } = result.data;
+          this.total = total;
+          this.listData = dataList;
+          const statusArray = new Array(dataList.length);
+          statusArray.fill(false);
+          this.listCheckedStatusArray = statusArray;
+          this.pageIndex = pIndex;
+        } else {
+          throw new Error(result?.message || '拉取列表数据出错了');
         }
-      },
+      } finally {
+        this.loading = false;
+      }
     },
-  });
-}
+  },
+});

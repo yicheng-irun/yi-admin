@@ -116,7 +116,7 @@ export class YiAdmin {
     if (addToSiteNavMenu) {
       this.modelNavMenu.add(new SiteNavMenu({
         title: `管理 ${modelAdmin.title || modelAdmin.name}`,
-        link: `model-admin/${modelAdmin.name}/`,
+        link: `#basePath#list/?model=${modelAdmin.name}`,
       }));
     }
   }

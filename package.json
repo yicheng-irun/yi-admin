@@ -23,9 +23,8 @@
   "scripts": {
     "dev": "ts-node-dev -P src-lib/test/tsconfig.json --respawn src-lib/test/index.ts",
     "dev:client": "vite",
-    "build:client": "vite build --ssrManifest --outDir dist/client",
+    "build:client": "vite build --outDir dist/client",
     "build:watch": "vite build --watch --outDir dist/client",
-    "build:server": "vite build --ssr src/client/entry-server.ts --outDir dist/server",
     "build:lib": "tsc -p ./src-lib/server",
     "build": "npm run build:client && npm run build:server && npm run build:lib"
   },

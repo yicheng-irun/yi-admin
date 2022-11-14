@@ -19,8 +19,8 @@ Object.keys(pages).forEach((path: string) => {
   const match = path.match(/\.\/pages(.*)\.page\.vue$/);
   if (match) {
     const name = match[1].toLocaleLowerCase();
-    let routerPath = name.replace(/\/index$/, '').replace(/^\//, '');
-    if (routerPath === 'index') {
+    let routerPath = name.replace(/\/index$/, '/').replace(/^\//, '');
+    if (routerPath === 'index/') {
       routerPath = '';
     }
 

@@ -57,19 +57,19 @@
 </template>
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useStore } from 'vuex';
 import FilterComponents from './filter-components';
-import { ModelAdminListStateType } from './store';
+import { useListPageStore } from './store';
 
-const { state } = useStore<ModelAdminListStateType>();
+const store = useListPageStore();
+
 const emit = defineEmits(['reloadData']);
 
 const filterFields = computed(() => {
-  return state.filterFields;
+  return store.$state.filterFields;
 });
 
 const filterForm = computed(() => {
-  return state.filterForm;
+  return store.$state.filterForm;
 });
 
 function getComponent(componentName: string) {

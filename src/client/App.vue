@@ -2,20 +2,16 @@
 <template>
   <no-ssr>
     <n-config-provider :theme-overrides="themeOverrides">
-      <n-message-provider>
-        <message-api ></message-api>
-      </n-message-provider>
       <n-notification-provider>
-        <notification-api></notification-api>
+        <n-message-provider>
+          <router-view />
+        </n-message-provider>
       </n-notification-provider>
-      <router-view />
     </n-config-provider>
   </no-ssr>
 </template>
 
 <script setup lang="ts">
-import MessageApi from './components/message-api.vue';
-import NotificationApi from './components/notification-api.vue';
 import type { GlobalThemeOverrides } from 'naive-ui';
 
 const themeOverrides: GlobalThemeOverrides = {

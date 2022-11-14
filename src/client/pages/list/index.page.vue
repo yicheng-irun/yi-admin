@@ -27,28 +27,24 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { createPageStore, ModelAdminListStateType } from './store';
+<script lang="ts" setup>
+import { computed, onMounted } from 'vue';
+import { useListPageStore } from './store';
 import TableView from './table-view.vue';
 
-export default defineComponent({
-  components: {
-    TableView,
-  },
-  createStore: createPageStore,
-  computed: {
-    state(): ModelAdminListStateType {
-      return this.$store.state;
-    },
-  },
-  mounted() {
-    Promise.all([
-      this.$store.dispatch('fetchListFields'),
-      this.$store.dispatch('fetchListActions'),
-      this.$store.dispatch('fetchListData'),
-    ]);
-  },
+const store = useListPageStore();
+
+const state = computed(() => {
+  return store.$state;
+});
+
+
+onMounted(() =>{
+  Promise.all([
+    store.fetchListActions(),
+    store.fetchListData(),
+    store.fetchListFields(),
+  ]);
 });
 </script>
 
