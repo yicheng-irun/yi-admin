@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { axiosInstance } from '../../plugins/axios.instance';
+import { menuLinkCheck } from './menu-link-check';
 
 export interface SiteMenu {
   icon: string;
@@ -37,6 +38,7 @@ export const useStore = defineStore('indexPage', {
             data: SiteMenu
           }>('/api/site-menu/');
         if (rsp.data.success) {
+          menuLinkCheck(rsp.data.data);
           this.siteMenu = rsp.data.data;
         }
       } catch (e) {

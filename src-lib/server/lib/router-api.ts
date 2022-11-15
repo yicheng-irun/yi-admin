@@ -1,5 +1,6 @@
 import express from 'express';
 import { apiAction, ResponseData } from '../tools/api-action';
+import { getQueryString } from '../tools/get-query-data';
 import { FilterBaseType } from './filter-types/filter-base-type';
 import { ListBaseType } from './list-types/list-base-type';
 import { ModelAdminListAction } from './model-admin-list-action';
@@ -32,7 +33,8 @@ export function createApiRouter({
     * 拉取列表页的字段信息
     */
   router.get('/list-fields/', apiAction(async (req) => {
-    const { modelName } = req.params;
+    const modelName = getQueryString(req.query, 'modelName');
+
     const modelAdmin = yiAdmin.modelAdminsMap[modelName];
     const fields = modelAdmin.getDataListFieldsAfterFilter();
     const filterFields = modelAdmin.getFilterFields();
@@ -53,7 +55,7 @@ export function createApiRouter({
    * 拉取列表页的字段信息
    */
   router.get('/list-actions/', apiAction(async (req) => {
-    const { modelName } = req.params;
+    const modelName = getQueryString(req.query, 'modelName');
     const actions = yiAdmin.modelAdminsMap[modelName].listActions;
     return {
       success: true,
@@ -63,7 +65,7 @@ export function createApiRouter({
 
   // 表单组件的请求
   router.post('/list-component-action/', apiAction(async (req) => {
-    const { modelName } = req.params;
+    const modelName = getQueryString(req.query, 'modelName');
     const fields = yiAdmin.modelAdminsMap[modelName].getDataListFields();
 
     const { fieldName, actionName, actionData } = {
@@ -102,7 +104,7 @@ export function createApiRouter({
 
   // filter组件的请求
   router.post('/list-filter-component-action/', apiAction(async (req) => {
-    const { modelName } = req.params;
+    const modelName = getQueryString(req.query, 'modelName');
     const fields = yiAdmin.modelAdminsMap[modelName].getFilterFields();
 
     const { fieldName, actionName, actionData } = {
@@ -143,7 +145,7 @@ export function createApiRouter({
    * 拉取列表页的数据
    */
   router.get('/list-data/', apiAction(async (req, res) => {
-    const { modelName } = req.params;
+    const modelName = getQueryString(req.query, 'modelName');
     const {
       pageIndex = '1', pageSize = '10', sort = '', filter = '{}',
     } = req.query;
@@ -183,7 +185,7 @@ export function createApiRouter({
     * 执行列表操作
     */
   router.post('/list-action/', apiAction(async (req) => {
-    const { modelName } = req.params;
+    const modelName = getQueryString(req.query, 'modelName');
     const actions = yiAdmin.modelAdminsMap[modelName].listActions;
     const {
       actionName = '',

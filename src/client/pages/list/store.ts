@@ -162,7 +162,7 @@ export const useListPageStore = defineStore('listPage', {
            success: boolean;
            message?: string;
            data: ListActionsItem[]
-        }>('/api/list-actions/', { });
+        }>('/api/list-actions/', {});
       const result = rsp.data;
       if (result.success) {
         const actions: ListActionsItem[] = [];

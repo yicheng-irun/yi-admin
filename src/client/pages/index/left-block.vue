@@ -2,7 +2,7 @@
   <div class="left-block">
     <n-menu
       :options="menuOption?.children || []"
-      v-model="menuKey"
+      v-model="data.menuKey"
       :collapsed="collapsed"
       :indent="14"
       accordion
@@ -11,85 +11,68 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed, onMounted, reactive } from 'vue';
 import { MenuOptionsItem, transformSiteMenuOptions } from './index-page-utils';
-import { IndexPageState, SiteMenu, useStore } from './index.store';
+import { useStore } from './index.store';
 
+defineProps({
+  collapsed: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-export default defineComponent({
-  props: {
-    collapsed: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      menuKey: '',
-    };
-  },
-  watch: {
-    menuKey(v) {
-      console.log('update', v);
-    },
-  },
-  setup() {
-    const store = useStore();
-    return {
-      store,
-    };
-  },
-  computed: {
-    state(): IndexPageState {
-      return this.store.$state;
-    },
-    siteMenu(): SiteMenu | null {
-      return this.state.siteMenu;
-    },
-    menuOption(): MenuOptionsItem | null {
-      if (this.siteMenu) {
-        return transformSiteMenuOptions(this.siteMenu);
-      }
-      return null;
-    },
-  },
-  mounted() {
-    const navHash = decodeURIComponent(window.location.hash.replace(/^#/, ''));
-    if (navHash) {
-      try {
-        console.log(navHash);
-        const value = JSON.parse(navHash) as {
+const store = useStore();
+
+const data = reactive({
+  menuKey: '',
+});
+
+const siteMenu = computed(() => {
+  return store.$state.siteMenu;
+});
+
+const menuOption = computed(() => {
+  if (siteMenu.value) {
+    return transformSiteMenuOptions(siteMenu.value);
+  }
+  return null;
+});
+
+onMounted(() => {
+  const navHash = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+  if (navHash) {
+    try {
+      const value = JSON.parse(navHash) as {
           link?: string;
           menuKey?: string;
         };
-        const link = value?.link;
-        if (link) {
-          window.open(link, 'main_frame');
-        }
-        const menuKey = value?.menuKey;
-        console.log(menuKey);
-        if (menuKey) {
-          this.menuKey = menuKey;
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  },
-  methods: {
-    onUpdate(key: string, item: MenuOptionsItem) {
-      const link = item.link;
+      const link = value?.link;
       if (link) {
-        const hashData = JSON.stringify({
-          link,
-          menuKey: key,
-        });
-        window.history.replaceState(null, '', `#${hashData}`);
+        window.open(link, 'main_frame');
       }
-    },
-  },
+      const menuKey = value?.menuKey;
+      console.log(menuKey);
+      if (menuKey) {
+        data.menuKey = menuKey;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
 });
+
+function onUpdate(key: string, item: MenuOptionsItem) {
+  const link = item.link;
+  if (link) {
+    const hashData = JSON.stringify({
+      link,
+      menuKey: key,
+    });
+    window.history.replaceState(null, '', `#${hashData}`);
+  }
+}
 
 </script>
 
