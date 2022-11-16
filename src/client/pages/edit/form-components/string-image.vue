@@ -32,10 +32,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, PropType } from 'vue';
-import { useAxios } from '../../../plugins/axiox.client';
+import { computed, PropType } from 'vue';
 import formatFileSize from '../components-utils/format-file-size';
 import Icon from '../../../components/Icon.vue';
+import { axiosInstance } from '../../../plugins/axios.instance';
+import { useMessage } from 'naive-ui';
 
 const props = defineProps({
   config: { type: Object as PropType<{
@@ -65,9 +66,7 @@ const value = computed((): string => {
   return props.editFormData[props.objectKey] as string || '';
 });
 
-const $axios = useAxios();
-const ctx = getCurrentInstance();
-const $message = ctx?.appContext.config.globalProperties.$message;
+const $message = useMessage();
 
 async function upload(file: File): Promise<string> {
   const formData = new FormData();
@@ -75,8 +74,8 @@ async function upload(file: File): Promise<string> {
   // 通过append向form对象添加数据
   formData.append('file', file);
   // FormData私有类对象，访问不到，可以通过get判断值是否传进去
-  const rsp = await $axios.post(
-      'component-action/',
+  const rsp = await axiosInstance.post(
+      '/api/edit-component-action/',
       formData,
       {
         params: {

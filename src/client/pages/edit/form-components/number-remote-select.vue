@@ -15,8 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, computed, ref, onMounted, getCurrentInstance } from 'vue';
-import { useAxios } from '../../../plugins/axiox.client';
+import { useMessage } from 'naive-ui';
+import { PropType, computed, ref, onMounted } from 'vue';
+import { axiosInstance } from '../../../plugins/axios.instance';
 
 const props = defineProps({
   config: Object as PropType<{
@@ -61,16 +62,14 @@ const options = computed(() => {
   return opts;
 });
 
-const $axios = useAxios();
-const ctx = getCurrentInstance();
-const $message = ctx?.appContext.config.globalProperties.$message;
+const $message = useMessage();
 
 
 async function remoteMethod(query: string, init = false) {
   loading.value = true;
   lastQuery = query;
   try {
-    const rsp1Promise = $axios.post('component-action/', {
+    const rsp1Promise = axiosInstance.post('/api/edit-component-action/', {
       fieldName: props.fieldName,
       actionName: 'getOptions',
       actionData: query,
@@ -82,7 +81,7 @@ async function remoteMethod(query: string, init = false) {
     } | null = null;
     const value = props.editFormData[props.objectKey];
     if (init && value) {
-      const rsp2 = await $axios.post('component-action/', {
+      const rsp2 = await axiosInstance.post('/api/edit-component-action/', {
         fieldName: props.fieldName,
         actionName: 'getLabelByValue',
         actionData: value,

@@ -66,17 +66,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance } from 'vue';
-import { useStore } from 'vuex';
+import { useNotification } from 'naive-ui';
+import { computed } from 'vue';
 import { FormComponents } from './form-components';
-import { ModelAdminEditPageState } from './store';
+import { useEditPageStore } from './store';
 
-const { state, commit, dispatch } = useStore<ModelAdminEditPageState>();
+const $notification = useNotification();
 
-const editId = computed(() => state.editId);
+const store = useEditPageStore();
 
-const editFormData = computed(() => state.editFormData);
-const editFormFields = computed(() => state.editFormFields);
+const state = computed(() => {
+  return store.$state;
+});
+
+const editId = computed(() => store.$state.editId);
+
+const editFormData = computed(() => store.$state.editFormData);
+const editFormFields = computed(() => store.$state.editFormFields);
 
 function getComponent(componentName: string) {
   if (Object.prototype.hasOwnProperty.call(FormComponents, componentName)) {
@@ -85,15 +91,11 @@ function getComponent(componentName: string) {
   return FormComponents.base;
 }
 
-const ctx = getCurrentInstance();
-const $notification = ctx?.appContext.config.globalProperties.$notification;
-
 async function submit() {
-  if (state.loading) return;
-  commit('setLoading', true);
-  // await new Promise((resolve) => setTimeout(resolve, 1000));
+  if (store.$state.loading) return;
+  store.setLoading(true);
   try {
-    const data = await dispatch('formSubmit');
+    const data = await store.formSubmit();
     if (data?.success) {
       $notification.success({
         title: '保存成功',
@@ -113,12 +115,12 @@ async function submit() {
     }
   }
 
-  commit('setLoading', false);
+  store.setLoading(false);
 }
 
 function reset() {
   try {
-    commit('resetEditFormData');
+    store.resetEditFormData();
     $notification.success({
       title: '重置好了',
       description: '重置好了',

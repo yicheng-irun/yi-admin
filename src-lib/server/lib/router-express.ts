@@ -4,7 +4,6 @@ import url, { URL } from 'url';
 import bodyParse from 'co-body';
 import { IncomingForm, Files, Fields } from 'formidable';
 import { YiAdmin } from './yi-admin';
-import { EditBaseType } from './edit-types/edit-base-type';
 import { expressRenderFunction } from '../middleware/ssr-render.middleware';
 import { readFileSync } from 'fs';
 import { createApiRouter } from './router-api';
@@ -37,20 +36,6 @@ function getFieldsAndFiles(req: express.Request): Promise<{
   });
 }
 
-function safeJson(func: (req: express.Request, res: express.Response) => any): express.Handler {
-  return async (req: express.Request, res: express.Response): Promise<void> => {
-    try {
-      await func(req, res);
-    } catch (e) {
-      console.error(e);
-      res.json({
-        success: false,
-        data: null,
-        message: e?.message ?? '',
-      });
-    }
-  };
-}
 
 function getBaseRenderSSRParams(yiAdmin: YiAdmin, req: express.Request, res: express.Response, rootPath = '../'): {
    assetsPath: string;
@@ -99,83 +84,6 @@ function appendModelAdminRouter(yiAdmin: YiAdmin, router: express.Router): void 
       await res.yiAdminSSRRender('/model-admin-edit', getBaseRenderSSRParams(yiAdmin, req, res));
     }
   });
-
-  // 获取表单编辑页的字段
-  modelRouter.get('/edit/fields/', safeJson((req, res: Response) => {
-    const { modelName } = req.params;
-    const modelAdmin = yiAdmin.modelAdminsMap[modelName];
-    const fields = modelAdmin.getEditFormFieldsAfterFilter();
-    res.json({
-      success: true,
-      data: {
-        fields,
-        modelInfo: {
-          title: modelAdmin.title,
-          name: modelAdmin.name,
-        },
-      },
-    });
-  }));
-
-  modelRouter.get('/edit/values/', safeJson(async (req, res: Response) => {
-    const { modelName } = req.params;
-    const { id } = req.query;
-    const values = await yiAdmin.modelAdminsMap[modelName].getEditData(String(id), {
-      req, res,
-    });
-    res.json({
-      success: true,
-      data: values,
-    });
-  }));
-
-  // 表单组件的请求
-  modelRouter.all('/edit/component-action/', safeJson(async (req: Request, res: Response) => {
-    const { modelName } = req.params;
-    const fields = yiAdmin.modelAdminsMap[modelName].getEditFormFields();
-    const { fieldName, actionName, actionData } = {
-      ...req.query,
-      ...req.body,
-    } as Record<string, any>;
-
-    let editField: EditBaseType | null = null;
-
-    for (let i = 0; i < fields.length; i += 1) {
-      const f = fields[i];
-      if (f.fieldName === fieldName) {
-        editField = f;
-        break;
-      }
-    }
-
-    if (editField) {
-      const result = await editField.action(actionName, actionData, {
-        method: req.method.toUpperCase(),
-        query: req.query,
-        body: req.body,
-        files: req.files,
-      });
-      if (result !== undefined) {
-        res.json(result);
-        return;
-      }
-    }
-
-    res.json({
-      success: false,
-      message: '未找到该字段对应的组件',
-    });
-  }));
-
-  modelRouter.post('/edit/submit/', safeJson(async (req, res: Response) => {
-    const { modelName } = req.params;
-    const { editId = '', formData = {} } = req.body;
-    const value = await yiAdmin.modelAdminsMap[modelName].formSubmit(editId, formData, { req, res });
-    res.json({
-      success: true,
-      data: value,
-    });
-  }));
 
 
   /**

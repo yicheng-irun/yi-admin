@@ -21,9 +21,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, getCurrentInstance, onBeforeUnmount, PropType, shallowRef } from 'vue';
-import { useAxios } from '../../../plugins/axiox.client';
+import { defineAsyncComponent, onBeforeUnmount, PropType, shallowRef } from 'vue';
 import type { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor';
+import { axiosInstance } from '../../../plugins/axios.instance';
+import { useMessage } from 'naive-ui';
 
 const WangEditorComp = defineAsyncComponent({
   loader: async () => {
@@ -73,9 +74,7 @@ const handleCreated = (editor: IDomEditor) => {
 };
 
 
-const $axios = useAxios();
-const ctx = getCurrentInstance();
-const $message = ctx?.appContext.config.globalProperties.$message;
+const $message = useMessage();
 
 async function uploadImage(file: File): Promise<string> {
   const formData = new FormData();
@@ -83,8 +82,8 @@ async function uploadImage(file: File): Promise<string> {
   // 通过append向form对象添加数据
   formData.append('file', file);
   // FormData私有类对象，访问不到，可以通过get判断值是否传进去
-  const rsp = await $axios.post(
-      'component-action/',
+  const rsp = await axiosInstance.post(
+      '/api/edit-component-action/',
       formData,
       {
         params: {

@@ -3,7 +3,7 @@
     <n-breadcrumb separator=">">
       <n-breadcrumb-item>
         <a
-          href="../../../"
+          :href="publicPath"
           target="_top"
         >
           首页
@@ -11,7 +11,7 @@
       </n-breadcrumb-item>
       <n-breadcrumb-item >
         <a
-          href="../"
+          :href="publicPath + 'list/?modelName=' + modelName"
         >
           {{ state.modelInfo.title || state.modelInfo.name }} 管理
         </a>
@@ -24,35 +24,26 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { createPageStore, ModelAdminEditPageState } from './store';
+<script lang="ts" setup>
+import { computed, onMounted } from 'vue';
+import { useEditPageStore } from './store';
 import EditForm from './edit-form.vue';
+import { getQuery } from '../../lib/query';
+import { publicPath } from '../../lib/public-path';
 
-export default defineComponent({
-  components: {
-    EditForm,
-  },
-  createStore: createPageStore,
+const modelName = getQuery('modelName') || '';
 
-  data() {
-    return {
-    };
-  },
-  mounted() {
-    Promise.all([
-      this.$store.dispatch('fetchEditFormFields'),
-      this.$store.dispatch('fetchEditData'),
-    ]);
-  },
+const store = useEditPageStore();
 
-  computed: {
-    state(): ModelAdminEditPageState {
-      return this.$store.state;
-    },
-
-  },
+const state = computed(() => {
+  return store.$state;
 });
+
+onMounted(() => {
+  store.fetchEditFormFields();
+  store.fetchEditData();
+});
+
 </script>
 
 <style lang="scss">

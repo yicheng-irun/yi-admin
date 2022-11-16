@@ -16,8 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, computed, ref, getCurrentInstance, onMounted } from 'vue';
-import { useAxios } from '../../../plugins/axiox.client';
+import { useMessage } from 'naive-ui';
+import { PropType, computed, ref, onMounted } from 'vue';
+import { axiosInstance } from '../../../plugins/axios.instance';
 
 const props = defineProps({
   config: Object as PropType<{
@@ -64,16 +65,14 @@ const options = computed(() => {
   return opts;
 });
 
-const $axios = useAxios();
-const ctx = getCurrentInstance();
-const $message = ctx?.appContext.config.globalProperties.$message;
+const $message = useMessage();
 
 
 async function remoteMethod(query: string) {
   loading.value = true;
   lastQuery = query;
   try {
-    const rsp1Promise = $axios.post('component-action/', {
+    const rsp1Promise = axiosInstance.post('/api/edit-component-action/', {
       fieldName: props.fieldName,
       actionName: 'getTags',
       actionData: query,

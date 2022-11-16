@@ -1,6 +1,7 @@
 import express from 'express';
 import { apiAction, ResponseData } from '../tools/api-action';
 import { getQueryString } from '../tools/get-query-data';
+import { EditBaseType } from './edit-types/edit-base-type';
 import { FilterBaseType } from './filter-types/filter-base-type';
 import { ListBaseType } from './list-types/list-base-type';
 import { ModelAdminListAction } from './model-admin-list-action';
@@ -211,6 +212,88 @@ export function createApiRouter({
         failedNum: 0,
       },
     };
+  }));
+
+
+  // 编辑相关
+
+
+  // 获取表单编辑页的字段
+  router.get('/edit-fields/', apiAction(async (req) => {
+    const modelName = getQueryString(req.query, 'modelName');
+    const modelAdmin = yiAdmin.modelAdminsMap[modelName];
+    const fields = modelAdmin.getEditFormFieldsAfterFilter();
+    return ({
+      success: true,
+      data: {
+        fields,
+        modelInfo: {
+          title: modelAdmin.title,
+          name: modelAdmin.name,
+        },
+      },
+    });
+  }));
+
+  router.get('/edit-values/', apiAction(async (req, res) => {
+    const modelName = getQueryString(req.query, 'modelName');
+    const { id } = req.query;
+    const values = await yiAdmin.modelAdminsMap[modelName].getEditData(String(id), {
+      req, res,
+    });
+    return ({
+      success: true,
+      data: values,
+    });
+  }));
+
+  // 表单组件的请求
+  router.all('/edit-component-action/', apiAction(async (req) => {
+    const modelName = getQueryString(req.query, 'modelName');
+    const fields = yiAdmin.modelAdminsMap[modelName].getEditFormFields();
+    const { fieldName, actionName, actionData } = {
+      ...req.query,
+      ...req.body,
+    } as Record<string, any>;
+
+    let editField: EditBaseType | null = null;
+
+    for (let i = 0; i < fields.length; i += 1) {
+      const f = fields[i];
+      if (f.fieldName === fieldName) {
+        editField = f;
+        break;
+      }
+    }
+
+    if (editField) {
+      const result = await editField.action(actionName, actionData, {
+        method: req.method.toUpperCase(),
+        query: req.query,
+        body: req.body,
+        // @ts-ignore
+        files: req.files,
+      });
+      if (result !== undefined) {
+        return (result as ResponseData<unknown>);
+      }
+    }
+
+    return ({
+      success: false,
+      message: '未找到该字段对应的组件',
+      data: null,
+    });
+  }));
+
+  router.post('/edit-submit/', apiAction(async (req, res) => {
+    const modelName = getQueryString(req.query, 'modelName');
+    const { editId = '', formData = {} } = req.body;
+    const value = await yiAdmin.modelAdminsMap[modelName].formSubmit(editId, formData, { req, res });
+    return ({
+      success: true,
+      data: value,
+    });
   }));
 
 
