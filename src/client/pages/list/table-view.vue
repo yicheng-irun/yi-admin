@@ -102,7 +102,7 @@
                   {{ index + 1 }}
                 </td>
                 <td>
-                  <a :href="`edit/?id=${item.id}`">{{ item.id }}</a>
+                  <a :href="getDetailUrl(item.id)">{{ item.id }}</a>
                 </td>
                 <td class="actions-td">
                   <n-space>
@@ -334,6 +334,10 @@ function handleCurrentChange(v: number) {
       }
     }
   });
+}
+
+function getDetailUrl(id: string | number) {
+  return publicPath + 'edit/' + location.search + '&id='+id;
 }
 
 function createData() {

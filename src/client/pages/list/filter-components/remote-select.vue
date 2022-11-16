@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { PropType, computed, ref, onMounted, getCurrentInstance } from 'vue';
-import { useAxios } from '../../../plugins/axiox.client';
+import { axiosInstance } from '../../../plugins/axios.instance';
 
 const props = defineProps({
   fieldName: {
@@ -66,7 +66,6 @@ const options = computed(() => {
   return opts;
 });
 
-const $axios = useAxios();
 const ctx = getCurrentInstance();
 const $message = ctx?.appContext.config.globalProperties.$message;
 
@@ -74,7 +73,7 @@ async function remoteMethod(query: string, init = false) {
   loading.value = true;
   lastQuery = query;
   try {
-    const rsp1Promise = $axios.post('list/filter-component-action/', {
+    const rsp1Promise = axiosInstance.post('/api/list-filter-component-action/', {
       fieldName: props.fieldName,
       actionName: 'getOptions',
       actionData: query,
@@ -88,7 +87,7 @@ async function remoteMethod(query: string, init = false) {
     const value = props.filterFormData[props.objectKey] as string;
 
     if (init && value) {
-      const rsp2 = await $axios.post('list/filter-component-action/', {
+      const rsp2 = await axiosInstance.post('/api/list-filter-component-action/', {
         fieldName: props.fieldName,
         actionName: 'getLabelByValue',
         actionData: value,

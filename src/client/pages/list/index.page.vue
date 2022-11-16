@@ -3,7 +3,7 @@
     <n-breadcrumb separator=">">
       <n-breadcrumb-item>
         <a
-          href="../../"
+          :href="publicPath"
           target="_top"
         >
           首页
@@ -14,7 +14,7 @@
       </n-breadcrumb-item>
       <n-breadcrumb-item v-if="state.hasFilterQuery">
         <a
-          href="./"
+          :href="publicPath + 'list/?modelName='+state.modelInfo.name"
         >
           {{ state.modelInfo.title || state.modelInfo.name }} 管理
         </a>
@@ -29,8 +29,10 @@
 
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue';
+import { publicPath } from '../../lib/public-path';
 import { useListPageStore } from './store';
 import TableView from './table-view.vue';
+
 
 const store = useListPageStore();
 

@@ -8,6 +8,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
+import { axiosInstance } from '../../../plugins/axios.instance';
 
 export default defineComponent({
   props: {
@@ -37,7 +38,7 @@ export default defineComponent({
   methods: {
     async getRemoteLabel(value: number | string) {
       try {
-        const rsp2 = await this.$axios.post('list/component-action/', {
+        const rsp2 = await axiosInstance.post('/api/list-component-action/', {
           fieldName: this.fieldName,
           actionName: 'getLabelByValue',
           actionData: value,
