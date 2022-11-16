@@ -4,6 +4,20 @@
     class="table-filter"
   >
     <span class="action-lable">过滤:</span>
+    <div class="filter-item">
+      <div class="filter-item-wrap">
+        <label class="filter-item-label">id: </label>
+        <div class="filter-fields-wrap">
+          <NInput
+            v-model:value="filterForm['_id']"
+            placeholder="输入ID进行查询"
+            clearable
+            class="filter-component-string"
+            @keydown.enter="emit('reloadData')"
+          />
+        </div>
+      </div>
+    </div>
     <div
       v-for="(fItem, idx) in filterFields"
       :key="idx"
@@ -56,6 +70,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { NInput } from 'naive-ui';
 import { computed } from 'vue';
 import FilterComponents from './filter-components';
 import { useListPageStore } from './store';

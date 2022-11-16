@@ -2,7 +2,7 @@ import { Handler, Request, Response } from 'express';
 
 export interface ResponseData<T> {
     success: boolean;
-    msg?: string;
+    message?: string;
     data: T
 }
 
@@ -29,7 +29,7 @@ export function apiAction<T>(handler: ApiActionHandler<T>): Handler {
       }
       res.json({
         success: false,
-        msg: e instanceof Error ? e.message : '接口出错了',
+        message: e instanceof Error ? e.message : '接口出错了',
         data: null,
       });
     }

@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 import {
-  Model, Document, SchemaTypeOptions, SchemaType, Schema,
+  Model, Document, SchemaTypeOptions, SchemaType, Schema, isValidObjectId,
 } from 'mongoose';
 import {
   ModelAdminBase,
@@ -319,6 +319,10 @@ export class MongooseModelAdmin extends ModelAdminBase {
     * data-list中拉取数据的函数
     */
   public async getDataList(req: DataListRequestBody, ctx: RequestInfo): Promise<DataListResponseBody> {
+    if (req.conditions['_id']) {
+      if (!isValidObjectId(req.conditions['_id'])) throw new Error('id参数异常');
+    }
+
     const dataPromise = this.model.find(req.conditions).limit(req.pageSize).skip((req.pageIndex - 1) * req.pageSize)
         .sort(req.sort || '')
         .exec();

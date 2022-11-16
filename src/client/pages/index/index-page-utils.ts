@@ -1,6 +1,7 @@
-import { h, RendererElement, RendererNode, VNode } from 'vue';
+import { h } from 'vue';
 import { SiteMenu } from './index.store';
 import Icon from '../../components/Icon.vue';
+import { MenuOption } from 'naive-ui/es/menu/src/interface';
 
 function renderIcon(icon: string) {
   return () => h(Icon, {
@@ -22,20 +23,8 @@ function renderLabel(text: string, href: string, target:string = 'main_frame') {
   }, [text]);
 }
 
-export interface MenuOptionsItem {
-    label: string | (() => VNode<RendererNode, RendererElement, {
-      [key: string]: any;
-  }>);
-    key: string;
-    link: string;
-    icon?: () => VNode<RendererNode, RendererElement, {
-        [key: string]: any;
-    }>;
-    children?: MenuOptionsItem[]
-}
-
-export function transformSiteMenuOptions(menu: SiteMenu, key: string = '0'): MenuOptionsItem {
-  const result: MenuOptionsItem = {
+export function transformSiteMenuOptions(menu: SiteMenu, key: string = '0'): MenuOption {
+  const result: MenuOption = {
     key,
     label: menu.link ? renderLabel(menu.title, menu.link, menu.target) : menu.title,
     link: menu.link,

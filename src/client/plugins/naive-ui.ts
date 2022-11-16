@@ -25,8 +25,6 @@ import { create,
   NSpin,
   NSwitch,
   NTooltip,
-  MessageApi,
-  NotificationApi,
 } from 'naive-ui';
 
 const naive = create({
@@ -61,12 +59,4 @@ const naive = create({
 
 export function useNaiveUi(app: App) {
   app.use(naive);
-}
-
-declare module '@vue/runtime-core' {
-  // eslint-disable-next-line no-unused-vars
-  interface ComponentCustomProperties {
-      $message: MessageApi;
-      $notification: NotificationApi;
-  }
 }

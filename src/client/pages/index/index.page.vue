@@ -12,8 +12,8 @@
       </span>
     </div>
     <div class="admin-main">
-      <n-layout has-sider>
-        <n-layout-sider
+      <NLayout has-sider>
+        <NLayoutSider
           collapse-mode="width"
           :collapsed-width="50"
           :width="240"
@@ -25,17 +25,17 @@
           @expand="collapsed = false"
         >
           <left-block v-if="state.siteMenu" :collapsed="collapsed" />
-        </n-layout-sider>
+        </NLayoutSider>
 
-        <n-layout-content class="iframe-wrapper">
+        <NLayoutContent class="iframe-wrapper">
           <iframe
             class="main-iframe"
             ref="iframe"
             name="main_frame"
             :src="state.iframeSrc"
           />
-        </n-layout-content>
-      </n-layout>
+        </NLayoutContent>
+      </NLayout>
     </div>
   </div>
 </template>
@@ -46,6 +46,7 @@ import { useStore } from './index.store';
 import Icon from '../../components/Icon.vue';
 import LeftBlock from './left-block.vue';
 import { onMounted, ref } from 'vue';
+import { NLayout, NLayoutContent, NLayoutSider } from 'naive-ui';
 
 const store = useStore();
 

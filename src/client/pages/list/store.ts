@@ -44,7 +44,7 @@ export interface ModelAdminListStateType {
    sortList: string[];
    hasFilterQuery: boolean;
    filterQueryStr: string;
-   filterForm: Record<string, unknown>;
+   filterForm: Record<string, string>;
 
    /**
     * 字段信息
@@ -187,6 +187,9 @@ export const useListPageStore = defineStore('listPage', {
       if (this.loading) return;
       this.loading = true;
       try {
+        if (this.filterForm['_id'] === '') {
+          delete this.filterForm['_id'];
+        }
         const rsp = await axiosInstance.get<{
              success: boolean;
              message?: string;

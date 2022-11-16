@@ -1,19 +1,21 @@
 <template>
   <div class="left-block">
-    <n-menu
+    <NMenu
       :options="menuOption?.children || []"
       v-model="data.menuKey"
       :collapsed="collapsed"
       :indent="14"
       accordion
       :on-update:value="onUpdate"
-    ></n-menu>
+    ></NMenu>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { NMenu } from 'naive-ui';
+import { OnUpdateValue } from 'naive-ui/es/menu/src/interface';
 import { computed, onMounted, reactive } from 'vue';
-import { MenuOptionsItem, transformSiteMenuOptions } from './index-page-utils';
+import { transformSiteMenuOptions } from './index-page-utils';
 import { useStore } from './index.store';
 
 defineProps({
@@ -63,7 +65,7 @@ onMounted(() => {
   }
 });
 
-function onUpdate(key: string, item: MenuOptionsItem) {
+const onUpdate: OnUpdateValue = function(key: string, item) {
   const link = item.link;
   if (link) {
     const hashData = JSON.stringify({
@@ -72,7 +74,7 @@ function onUpdate(key: string, item: MenuOptionsItem) {
     });
     window.history.replaceState(null, '', `#${hashData}`);
   }
-}
+};
 
 </script>
 
