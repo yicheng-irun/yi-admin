@@ -40,19 +40,9 @@ export async function createApp2() {
 
   app.use('/uploads', express.static(resolve(__dirname, '../../uploads')));
 
-  app.use('/test/', await myadmin.createExpressRouter('/test/', {
-    hmr: {
-      server,
-      clientPort: 5000
-    }
-  }));
+  app.use('/test/', await myadmin.createExpressRouter('/test/', { }));
 
-  // app.use('/test2/', await myadmin2.createExpressRouter('/test2/', {
-  //   hmr: {
-  //     server,
-  //     clientPort: 5000
-  //   }
-  // }));
+  app.use('/test2/', await myadmin2.createExpressRouter('/test2/', { }));
 
   return server;
 }

@@ -1,16 +1,11 @@
-import express, { Handler, NextFunction } from 'express';
+import express, { Handler } from 'express';
 import { resolve } from 'path';
-import url, { URL } from 'url';
 import bodyParse from 'co-body';
 import { IncomingForm, Files, Fields } from 'formidable';
 import { YiAdmin } from './yi-admin';
-import { expressRenderFunction } from '../middleware/ssr-render.middleware';
 import { readFileSync } from 'fs';
 import { createApiRouter } from './router-api';
 
-type Response = express.Response & {
-   yiAdminSSRRender?: expressRenderFunction;
-}
 
 type Request = express.Request & {
    files?: Files;
@@ -37,67 +32,25 @@ function getFieldsAndFiles(req: express.Request): Promise<{
 }
 
 
-function getBaseRenderSSRParams(yiAdmin: YiAdmin, req: express.Request, res: express.Response, rootPath = '../'): {
-   assetsPath: string;
-   csrfParam: {
-      query?: {
-         [key: string]: string;
-      };
-      body?: {
-         [key: string]: string;
-      };
-   };
-} {
-  return {
-    assetsPath: rootPath ? url.resolve(req.baseUrl, `${rootPath}__yi-admin-assets__/`) : `${req.baseUrl}/__yi-admin-assets__/`,
-    csrfParam: yiAdmin.options.csrfParam ? yiAdmin.options.csrfParam(
-        req,
-        res,
-    ) : {},
-  };
-}
-
-function checkRedirectMiddleware(req: Request, res: Response, next): boolean {
-  const url = new URL('https://test.com' + req.originalUrl);
-  if (!url.pathname.endsWith('/')) {
-    url.pathname += '/';
-    res.redirect(url.pathname + url.search);
-    return;
-  }
-  next();
-}
-
-function appendModelAdminRouter(yiAdmin: YiAdmin, router: express.Router): void {
-  // eslint-disable-next-line new-cap
-  const modelRouter = express.Router({
-    mergeParams: true,
-  });
-
-  modelRouter.get('/', checkRedirectMiddleware, async (req, res: Response) => {
-    if (res.yiAdminSSRRender) {
-      await res.yiAdminSSRRender('/model-admin-list', getBaseRenderSSRParams(yiAdmin, req, res));
-    }
-  });
-
-  modelRouter.get('/edit/', checkRedirectMiddleware, async (req, res: Response) => {
-    if (res.yiAdminSSRRender) {
-      await res.yiAdminSSRRender('/model-admin-edit', getBaseRenderSSRParams(yiAdmin, req, res));
-    }
-  });
-
-
-  /**
-    * 挂载统一路由
-    */
-  router.use('/model-admin/:modelName', async (req, res: Response, next: NextFunction) => {
-    const { modelName } = req.params;
-    if (Object.prototype.hasOwnProperty.call(yiAdmin.modelAdminsMap, modelName)) {
-      next();
-    } else {
-      res.sendStatus(404);
-    }
-  }, modelRouter);
-}
+// function getBaseRenderSSRParams(yiAdmin: YiAdmin, req: express.Request, res: express.Response, rootPath = '../'): {
+//    assetsPath: string;
+//    csrfParam: {
+//       query?: {
+//          [key: string]: string;
+//       };
+//       body?: {
+//          [key: string]: string;
+//       };
+//    };
+// } {
+//   return {
+//     assetsPath: rootPath ? url.resolve(req.baseUrl, `${rootPath}__yi-admin-assets__/`) : `${req.baseUrl}/__yi-admin-assets__/`,
+//     csrfParam: yiAdmin.options.csrfParam ? yiAdmin.options.csrfParam(
+//         req,
+//         res,
+//     ) : {},
+//   };
+// }
 
 
 export async function createExpressRouter({
@@ -145,7 +98,6 @@ export async function createExpressRouter({
   });
 
 
-  appendModelAdminRouter(yiAdmin, router);
   router.use('/api', createApiRouter({
     yiAdmin,
     basePath,
