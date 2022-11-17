@@ -26,7 +26,7 @@
     "build:client": "vite build --outDir dist/client",
     "build:watch": "vite build --watch --outDir dist/client",
     "build:lib": "tsc -p ./src-lib/server",
-    "build": "npm run build:client && npm run build:server && npm run build:lib"
+    "build": "npm run build:client && npm run build:lib"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.0.1",
