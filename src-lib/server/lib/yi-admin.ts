@@ -5,13 +5,9 @@ import { EditTypes, ListTypes } from './types';
 import { createExpressRouter } from './router-express';
 import { Server } from 'http';
 
-interface CsrfParamResult {
-   query?: {
-      [key: string]: string;
-   };
-   body?: {
-      [key: string]: string;
-   };
+export interface CsrfParamResult {
+  query?: Record<string, string>;
+  body?: Record<string, string>;
 }
 
 /**

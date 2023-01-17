@@ -108,8 +108,11 @@ export async function createExpressRouter({
   router.use('/assets', express.static(assetsPath));
 
   const handler: Handler = (req, res) => {
+    const csrfParam = yiAdmin.options.csrfParam?.(req, res) || {};
+
     const html = readFileSync(resolve(__dirname, '../../../dist/client/index.html')).toString()
-        .replace('window._publicPath="/"', 'window._publicPath="' + basePath + '"');
+        .replace('window._publicPath="/"', 'window._publicPath="' + basePath + '"')
+        .replace('window.csrfParam={}', 'window.csrfParam='+JSON.stringify(csrfParam));
     res.type('html').send(html);
   };
   router.get('/', handler);
