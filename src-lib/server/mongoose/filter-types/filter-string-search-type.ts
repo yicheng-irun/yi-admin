@@ -7,25 +7,36 @@ import { FilterBaseTypeConfig } from '../../lib/filter-types/filter-base-interfa
  */
 export class FilterStringSearchType extends FilterBaseType implements FilterStringSearchInterface {
   public componentName: 'string-search' = 'string-search';
+  public conditionType: string = 'reg'; // 默认为reg
 
-  constructor(config: FilterBaseTypeConfig = {
-    placeholder: '搜索',
-  }) {
-    super(config);
+  constructor(config: FilterBaseTypeConfig = {}) {
+    const tempConfig = {
+      placeholder: '搜索',
+      conditionType: 'reg', // 默认是正则
+      ...config,
+    };
+    super({ ...config });
+    this.conditionType = tempConfig.conditionType;
   }
 
   /**
     * 获取orm框架的查询条件
     * @param fieldParam 前端组件传上来的参数
     */
-  public getConditions(fieldParam: string): {
-      [key: string]: RegExp;
+  public getConditions(fieldParam: string, conditionType: 'string' | 'reg' = 'reg'): {
+      [key: string]: RegExp | string;
       } {
     if (fieldParam) {
-      const reg = new RegExp(String(fieldParam).replace(/([*.?+$^[\](){}|\\/])/g, '\\$1'));
-      return {
-        [this.fieldName]: reg,
-      };
+      if (this.conditionType === 'reg') {
+        const reg = new RegExp(String(fieldParam).replace(/([*.?+$^[\](){}|\\/])/g, '\\$1'));
+        return {
+          [this.fieldName]: reg,
+        };
+      } else if (this.conditionType === 'string') {
+        return {
+          [this.fieldName]: fieldParam,
+        };
+      }
     }
     return {};
   }

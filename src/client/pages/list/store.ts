@@ -202,6 +202,7 @@ export const useListPageStore = defineStore('listPage', {
               pageIndex: pIndex,
               pageSize: this.pageSize,
               sort: this.sortList.filter((t) => !!t).join(' '),
+              conditions: JSON.stringify(this.filterForm), // 后台没有使用filter，而是conditions
               filter: JSON.stringify(this.filterForm),
             },
           });

@@ -167,6 +167,7 @@ const YiAdminDemoSchema = new Schema<{
   boolField: {
     type: Boolean,
     default: false,
+    testYangType: 11,
     filterType: new MongooseModelAdmin.FilterTypes.FilterBooleanType(),
   },
   dateField: Date,

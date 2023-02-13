@@ -1,6 +1,8 @@
+// 这是核心代码
 import YiAdmin, {
-  MongooseModelAdmin, SiteNavMenu, ModelAdminListAction, ListActionResult,
+  MongooseModelAdmin, SiteNavMenu, ModelAdminListAction, ListActionResult, SequelizeModelAdmin,
 } from '../server/index';
+// 这是各种models定义
 import YiAdminDemoModel from './models/demo.model';
 import { RefFieldClassModel } from './models/demo.refclass.model';
 import FileImageModel from './models/file-image.model';
@@ -15,10 +17,12 @@ import ArrayImageModel from './models/array-image.model';
 import ArrayStringEnumModel from './models/array-string-enum.model';
 import ObjModel from './models/obj-type.model';
 import NumberTestModel from './models/number-test.model';
+import { Book } from './sequelizeModels/book.model';
 
+// 实例化一个管理端
 const myadmin = new YiAdmin({
   siteConfig: {
-    siteName: '测试站点名',
+    siteName: '测试站点名1',
   },
   csrfParam(req, res): {} {
     return {
@@ -32,6 +36,7 @@ const myadmin = new YiAdmin({
   },
 });
 
+// 注入各种model
 myadmin.addModelAdmin(new MongooseModelAdmin({
   name: 'array-image',
   model: ArrayImageModel,
@@ -146,6 +151,13 @@ myadmin.addModelAdmin(new MongooseModelAdmin({
 myadmin.addModelAdmin(new MongooseModelAdmin({
   name: 'obj-type',
   model: ObjModel,
+}));
+
+myadmin.addModelAdmin(new SequelizeModelAdmin({
+  name: 'sequlize-test',
+  title: '图书管理',
+  model: Book,
+  listFields: ['name', 'description', 'cover', 'json'],
 }));
 
 
