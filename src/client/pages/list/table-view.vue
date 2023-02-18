@@ -2,7 +2,6 @@
   <div class="table-view">
     <n-spin
       :show="state.loading"
-
     >
       <div class="top-action">
         <TableAction
@@ -440,12 +439,12 @@ async function doBatchAction(actionObj: ListActionsItem | null) {
     box-shadow: 0 0 3px #0001;
     >.table-wrapper {
       overflow-x: auto;
-      >table {
+      >table.table-view-table {
         min-width: 100%;
         background: #fff;
         border-collapse: collapse;
         font-size: 12px;
-        >thead {
+        >thead.table-view-thead {
           border-bottom: 2px dotted #0004;
           line-height: 1.2;
           color: #000a;
@@ -463,7 +462,7 @@ async function doBatchAction(actionObj: ListActionsItem | null) {
             }
           }
         }
-        >tbody {
+        >tbody.table-view-tbody {
           line-height: 1.5;
           >tr {
             >td {

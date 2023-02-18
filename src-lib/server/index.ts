@@ -9,6 +9,8 @@ export { ModelAdminBase } from './lib/model-admin-base';
 
 export { MongooseModelAdmin } from './mongoose/mongoose-model-admin';
 
+export { SequelizeModelAdmin } from './sequelize/sequelize-model-admin';
+
 export {
   EditTypes,
   ListTypes,

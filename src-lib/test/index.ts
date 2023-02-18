@@ -9,6 +9,8 @@ import uploadsRouter from './uploads-router';
 import { getEnv } from './get-env';
 import koaConnect from 'koa-connect';
 import { createServer } from 'http';
+import { Book, sequelizeObj } from './sequelizeModels/book.model';
+
 
 config();
 
@@ -33,8 +35,24 @@ export default async function createApp(): Promise<Koa> {
 }
 
 export async function createApp2() {
+  // 连接mongoosedb数据库
   await mongoose.connect(MONGODB_URI, {});
+  // sequlize连接mysql数据库
 
+
+  // 验证是否连接成功
+  sequelizeObj.authenticate().then(async () => {
+    console.log('Connection has been established successfully.');
+    Book.sync({
+      alter: true,
+    }).then((res) => {
+      console.log('res:==', res);
+    });
+    // Book.sync();
+  }).catch((err) => {
+    console.error('Unable to connect to the database:', err);
+  });
+  // await sequelizeObj.sync({ force: true });
   const app = express();
   const server = createServer(app);
 

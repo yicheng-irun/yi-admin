@@ -161,15 +161,21 @@ export function createApiRouter({
          } = {
            ...filterData,
          };
+
+    /**
+     * 查询数据库，需要过滤的字段
+     */
     const filterFields = yiAdmin.modelAdminsMap[modelName].getFilterFields();
     filterFields.forEach((filterItem: { fieldName: string | number; getConditions: (arg0: any) => any }) => {
       if (Object.prototype.hasOwnProperty.call(filterData, filterItem.fieldName)) {
+        // getConditions返回的是正则表达式
         const condition = filterItem.getConditions(filterData[filterItem.fieldName]);
         delete parsedFilter[filterItem.fieldName];
         Object.assign(parsedFilter, condition);
       }
     });
 
+    // 具体去查询数据
     const afterFilterData = await yiAdmin.modelAdminsMap[modelName].getDataListAfterFilter({
       pageIndex: pageIndexNumber,
       pageSize: pageSizeNumber,

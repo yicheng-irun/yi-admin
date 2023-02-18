@@ -317,7 +317,7 @@ export class ModelAdminBase {
     return fields;
   }
 
-  private getExtraDataListFileds(): string[] {
+  public getExtraDataListFileds(): string[] {
     const dbFields = this.getDataListFields().map((t) => (t.fieldName));
     const extraFields: string[] = [];
     if (this.listFields) {
@@ -341,12 +341,13 @@ export class ModelAdminBase {
   /**
     * data-list中拉取数据的函数
     */
-  public getDataList(req: DataListRequestBody, ctx: RequestInfo): Promise<DataListResponseBody> {
+  public async getDataList(req: DataListRequestBody, ctx: RequestInfo): Promise<DataListResponseBody> {
     throw new Error('请在子类中实现getDataList函数');
   }
 
   public async getDataListAfterFilter(req: DataListRequestBody, ctx: RequestInfo): Promise<DataListResponseBody> {
     const dataResult = await this.getDataList(req, ctx);
+
     const extraFields = this.getExtraDataListFileds();
     if (extraFields.length) {
       const promises = dataResult.dataList.map(async (item): Promise<void> => {

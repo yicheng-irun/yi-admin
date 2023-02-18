@@ -11,6 +11,8 @@ export interface FilterBaseTypeConfig {
     * placeholder
     */
    placeholder?: string;
+
+   conditionType?: 'reg' | 'string'
 }
 
 /**
