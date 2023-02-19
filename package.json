@@ -22,9 +22,10 @@
   },
   "scripts": {
     "dev": "ts-node-dev -P src-lib/test/tsconfig.json --respawn src-lib/test/index.ts",
+    "dev:server": "ts-node-dev -P src-lib/test/tsconfig.json --respawn src-lib/test/index.ts",
+    "dev:client-watch": "vite build --watch --outDir dist/client",
     "dev:client": "vite",
     "build:client": "vite build --outDir dist/client",
-    "build:watch": "vite build --watch --outDir dist/client",
     "build:lib": "tsc -p ./src-lib/server",
     "build": "npm run build:client && npm run build:lib"
   },
@@ -33,10 +34,7 @@
     "co-body": "^6.1.0",
     "express": "^4.17.1",
     "formidable": "^2.0.1",
-    "mime": "^3.0.0",
-    "mongoose": "^6.3.4",
-    "mysql2": "^3.1.0",
-    "sequelize": "^6.28.0"
+    "mime": "^3.0.0"
   },
   "devDependencies": {
     "@ant-design/icons-vue": "^6.0.1",
@@ -69,5 +67,10 @@
     "vue-router": "^4.0.15",
     "vue-tsc": "^0.40.13",
     "vuex": "^4.0.2"
+  },
+  "optionalDependencies": {
+    "mongoose": "^6.9.2",
+    "mysql2": "^3.1.2",
+    "sequelize": "^6.28.0"
   }
 }

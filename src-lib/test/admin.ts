@@ -3,21 +3,21 @@ import YiAdmin, {
   MongooseModelAdmin, SiteNavMenu, ModelAdminListAction, ListActionResult, SequelizeModelAdmin,
 } from '../server/index';
 // 这是各种models定义
-import YiAdminDemoModel from './models/demo.model';
-import { RefFieldClassModel } from './models/demo.refclass.model';
-import FileImageModel from './models/file-image.model';
-import StringTestModel from './models/string-test.model';
-import StringEnumTestModel from './models/string-enum-test.model';
-import NumberEnumTestModel from './models/number-enum-test.model';
-import StringFileTestModel from './models/string-file.model';
-import StringImageTestModel from './models/string-image.model';
-import StringWangEditorModel from './models/string-wang.model';
-import ArrayTestModel from './models/array-test.model';
-import ArrayImageModel from './models/array-image.model';
-import ArrayStringEnumModel from './models/array-string-enum.model';
-import ObjModel from './models/obj-type.model';
-import NumberTestModel from './models/number-test.model';
-import { Book } from './sequelizeModels/book.model';
+import YiAdminDemoModel from './mongoose-models/demo.model';
+import { RefFieldClassModel } from './mongoose-models/demo.refclass.model';
+import FileImageModel from './mongoose-models/file-image.model';
+import StringTestModel from './mongoose-models/string-test.model';
+import StringEnumTestModel from './mongoose-models/string-enum-test.model';
+import NumberEnumTestModel from './mongoose-models/number-enum-test.model';
+import StringFileTestModel from './mongoose-models/string-file.model';
+import StringImageTestModel from './mongoose-models/string-image.model';
+import StringWangEditorModel from './mongoose-models/string-wang.model';
+import ArrayTestModel from './mongoose-models/array-test.model';
+import ArrayImageModel from './mongoose-models/array-image.model';
+import ArrayStringEnumModel from './mongoose-models/array-string-enum.model';
+import ObjModel from './mongoose-models/obj-type.model';
+import NumberTestModel from './mongoose-models/number-test.model';
+import { Book } from './sequelize-models/book.model';
 
 // 实例化一个管理端
 const myadmin = new YiAdmin({

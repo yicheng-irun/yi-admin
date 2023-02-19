@@ -1,24 +1,8 @@
-import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import { EditTypes } from '../../server';
 import { FilterTypes } from '../../server/mongoose/mongoose-filter-types';
-export const sequelizeObj = new Sequelize('', '', '', {
-  host: '',
-  port: 0,
-  dialect: 'mysql', /* 选择 'mysql' | 'mariadb' | 'postgres' | 'mssql' 其一 */
-  dialectOptions: {
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_unicode_ci',
-    supportBigNumbers: true,
-    bigNumberStrings: true,
-  },
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 30000,
-  },
-  timezone: '+08:00',
-  logging: console.log,
-});
+import { sequelizeObj } from './sequelize-conn';
+
 
 export class Book extends Model {}
 

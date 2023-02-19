@@ -9,7 +9,8 @@ import uploadsRouter from './uploads-router';
 import { getEnv } from './get-env';
 import koaConnect from 'koa-connect';
 import { createServer } from 'http';
-import { Book, sequelizeObj } from './sequelizeModels/book.model';
+import { Book } from './sequelize-models/book.model';
+import { sequelizeObj } from './sequelize-models/sequelize-conn';
 
 
 config();
@@ -53,6 +54,8 @@ export async function createApp2() {
     console.error('Unable to connect to the database:', err);
   });
   // await sequelizeObj.sync({ force: true });
+
+
   const app = express();
   const server = createServer(app);
 
