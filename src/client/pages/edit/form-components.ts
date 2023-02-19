@@ -15,6 +15,7 @@ export const FormComponents: Record<string, DefineComponent<{}, {}, any>> = {
   'string-image': defineAsyncComponent(() => import('./form-components/string-image.vue')),
   'string-remote-select': defineAsyncComponent(() => import('./form-components/string-remote-select.vue')),
   'string': defineAsyncComponent(() => import('./form-components/string.vue')),
+  'string-json': defineAsyncComponent(() => import('./form-components/string-json.vue')),
   'string-textarea': defineAsyncComponent(() => import('./form-components/string-textarea.vue')),
   'string-wang-editor': defineAsyncComponent(() => import('./form-components/string-wang-editor.vue')),
 };

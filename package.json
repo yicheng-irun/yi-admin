@@ -54,6 +54,7 @@
     "eslint": "^8.3.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-vue": "^8.1.1",
+    "json-editor-vue3": "^1.0.8",
     "koa": "^2.13.4",
     "koa-connect": "^2.1.0",
     "naive-ui": "^2.29.0",

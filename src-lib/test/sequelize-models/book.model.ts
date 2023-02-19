@@ -32,16 +32,8 @@ Book.init({
   },
   json: {
     type: DataTypes.TEXT,
-    editType: new EditTypes.EditStringWangEditorType({
-      minLength: 2,
-      maxLength: 2,
-      placeholder: 'ddd',
-      uploadImgMaxSize: 1,
-      writeFile: async (file) => {
-        return {
-          url: '',
-        };
-      },
+    editType: new EditTypes.EditStringJsonType({
+      placeholder: 'ddd请输入json',
     }),
   },
 }, {

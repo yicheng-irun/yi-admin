@@ -10,6 +10,7 @@ import { EditObjectType } from './edit-types/edit-object-type';
 import { EditStringEnumType } from './edit-types/edit-string-enum-type';
 import { EditStringFileType } from './edit-types/edit-string-file';
 import { EditStringImageType } from './edit-types/edit-string-image';
+import { EditStringJsonType } from './edit-types/edit-string-json-type';
 import { EditStringRemoteSelectType } from './edit-types/edit-string-remote-select-type';
 import { EditStringTextareaType } from './edit-types/edit-string-textarea-type';
 import { EditStringType } from './edit-types/edit-string-type';
@@ -41,6 +42,7 @@ export const EditTypes = {
   EditStringImageType,
   EditStringRemoteSelectType,
   EditStringTextareaType,
+  EditStringJsonType,
   EditStringType,
   EditStringWangEditorType,
 };
