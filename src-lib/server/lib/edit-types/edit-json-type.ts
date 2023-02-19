@@ -12,6 +12,5 @@ export class EditJsonType extends EditBaseType {
   public componentConfig: EditBaseComponentConfig & {
    } = {
       ...this.componentConfig,
-
     };
 }

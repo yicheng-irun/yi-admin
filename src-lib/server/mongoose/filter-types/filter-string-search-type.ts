@@ -9,7 +9,9 @@ export class FilterStringSearchType extends FilterBaseType implements FilterStri
   public componentName: 'string-search' = 'string-search';
   public conditionType: string = 'reg'; // 默认为reg
 
-  constructor(config: FilterBaseTypeConfig = {}) {
+  constructor(config: FilterBaseTypeConfig & {
+    conditionType?: 'reg' | 'string'
+  } = {}) {
     const tempConfig = {
       placeholder: '搜索',
       conditionType: 'reg', // 默认是正则

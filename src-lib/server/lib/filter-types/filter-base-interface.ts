@@ -12,7 +12,6 @@ export interface FilterBaseTypeConfig {
     */
    placeholder?: string;
 
-   conditionType?: 'reg' | 'string'
 }
 
 /**
